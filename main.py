@@ -17,7 +17,7 @@ from deta import Deta
 
 deta = Deta() 
 
-db = deta.Base('fastapi-crud')
+db = deta.Base('fastapi-crud') #Nombrepara la bbdd
 
 app = FastAPI() 
 
