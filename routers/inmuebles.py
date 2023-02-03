@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from deta import Deta
 from db import client
 from db.models.inmuebles import Inmueble, InmuebleUpdate
+import json
 
 ### Inmuebles API ###
 
@@ -19,7 +20,7 @@ from db.models.inmuebles import Inmueble, InmuebleUpdate
 # DETA INSTRUCTIONS
 # deta visor open //para abrir la consola
 # deta watch // deploy automaticamente los cambios
-# deta --help
+# deta --help 
 
 router = APIRouter(prefix="/inmuebles",
                    tags=["inmuebles"],
@@ -50,13 +51,21 @@ router = APIRouter(prefix="/inmuebles",
 # Serviciopara crear inmueble - POST
 @router.post("/", status_code=201)
 def create_inmueble(inmueble: Inmueble):
-    u = client.db.put(inmueble.dict())
+    inmueble = inmueble.json()
+    print(inmueble)
+    print(type(inmueble))
+    inmuebleJson = json.loads(inmueble) 
+    print('despues de convertir: ',type(inmueble))
+
+    u = client.db_inmuebles.put(inmuebleJson)
     return u
+
+    
 
 # Servicio para devolver inmueble por ID - GET
 @router.get("/{id}")
 def get_inmueble(id):
-    inmueble = client.db.get(id)
+    inmueble = client.db_inmuebles.get(id)
     if inmueble: # Si encuentra inmueble
         return inmueble
     else: # Si no lo encuentra
@@ -65,7 +74,7 @@ def get_inmueble(id):
 #Servicio para devolver todos los registros - GET
 @router.get("/")
 def get_inmuebles():
-    inmueble = client.db.fetch()
+    inmueble = client.db_inmuebles.fetch()
     json_compatible_item_data = jsonable_encoder(inmueble)
     return  JSONResponse(content=json_compatible_item_data['_items'])
  
@@ -75,7 +84,7 @@ def update_inmueble(uid: str, uu: InmuebleUpdate):
     updates = {k:v for k,v in uu.dict().items() if v is not None}
     try:
         client.db.update(updates,uid)
-        return client.db.get(uid)
+        return client.db_inmuebles.get(uid)
     except Exception:
         return JSONResponse({"message":"Inmueble not found"}, status_code=404)
 
@@ -83,7 +92,7 @@ def update_inmueble(uid: str, uu: InmuebleUpdate):
 @router.delete("/{id}")
 def delete_inmueble(id:str):
     try:
-        client.db.delete(id)
+        client.db_inmuebles.delete(id)
         return JSONResponse({"message":"Inmueble deleted"}, status_code=200)
     except Exception:
         return JSONResponse({"message":"Inmueble not found"}, status_code=404)

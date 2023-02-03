@@ -32,6 +32,6 @@ from deta import Deta
 
 deta = Deta() 
 
-db = deta.Base('inmuebles') #Nombre para la bbdd
-db = deta.Base('compradores') #Nombre para la bbdd
-db = deta.Base('vendedores') #Nombre para la bbdd
+db_inmuebles = deta.Base('inmuebles') #Nombre para la bbdd
+db_compradores = deta.Base('compradores') #Nombre para la bbdd
+db_vendedores = deta.Base('vendedores') #Nombre para la bbdd
