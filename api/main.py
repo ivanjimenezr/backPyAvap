@@ -30,9 +30,9 @@ app = FastAPI()
 # )
 
 
-app.include_router(inmuebles)
-# app.include_router(compradores.router)
-# app.include_router(vendedores.router)
+# app.include_router(inmuebles)
+
+
 
 
 # @app.get("/")
