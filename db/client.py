@@ -15,11 +15,7 @@ from dotenv import dotenv_values
 config = dotenv_values('.env')
 # Descomentar el db_client local o remoto correspondiente
 
-# # Base de datos local MongoDB
-# db_client = mongo_client.MongoClient('mongodb+srv://chiklete:.Lechuga!@cluster0.f3k1j.mongodb.net/?retryWrites=true&w=majority')
-# print('Connected to MongoDB...')
 
-# db = db_client['Avap'] 
 
 # Base de datos local MongoDB
 db_client = mongo_client.MongoClient(config['ATLAS_URI'])
