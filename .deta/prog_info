@@ -1,1 +1,1 @@
-{"id":"dc6bd2a7-e172-46e2-ab73-2f4b6a383408","space":49436,"runtime":"python3.9","name":"FastAPI","path":"auv7fn","project":"a03x8lf5","account":"144798365827","region":"eu-central-1","deps":["fastapi","uvicorn","deta","python-multipart"],"envs":null,"public":true,"log_level":"debug","cron":""}
+{"id":"dc6bd2a7-e172-46e2-ab73-2f4b6a383408","space":49436,"runtime":"python3.9","name":"FastAPI","path":"auv7fn","project":"a03x8lf5","account":"144798365827","region":"eu-central-1","deps":null,"envs":null,"public":true,"log_level":"debug","cron":""}
