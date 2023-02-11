@@ -2,3 +2,4 @@ fastapi
 uvicorn
 deta
 python-multipart
+pymongo>=3.1
