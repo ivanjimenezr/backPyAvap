@@ -8,13 +8,18 @@
 # Ejecución: sudo mongod --dbpath "/path/a/la/base/de/datos/"
 # Conexión: mongodb://localhost
 
-# from pymongo import MongoClient
-from deta import Deta
+from pymongo import MongoClient,mongo_client 
+from dotenv import dotenv_values
 
+
+config = dotenv_values('.env')
 # Descomentar el db_client local o remoto correspondiente
 
 # Base de datos local MongoDB
-# db_client = MongoClient().local
+db_client = mongo_client.MongoClient(config['ATLAS_URI'])
+print('Connected to MongoDB...')
+
+db = db_client[config['DB_NAME']] 
 
 # Clase en vídeo: https://youtu.be/_y9qQZXE24A?t=25470
 
@@ -30,8 +35,8 @@ from deta import Deta
 # Deta - https://www.deta.sh/
 # Intrucciones - https://fastapi.tiangolo.com/deployment/deta/
 
-deta = Deta() 
+# deta = Deta() 
 
-db_inmuebles = deta.Base('inmuebles') #Nombre para la bbdd
-db_compradores = deta.Base('compradores') #Nombre para la bbdd
-db_vendedores = deta.Base('vendedores') #Nombre para la bbdd
+db_inmuebles = db.inmuebles #Nombre para la bbdd
+db_compradores = db.compradore #Nombre para la bbdd
+db_vendedores = db.vendedores #Nombre para la bbdd

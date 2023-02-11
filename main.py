@@ -1,14 +1,6 @@
 from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-# from deta import Deta
+from routes.inmuebles import inmuebles
 
-# from db import client
-
-# from routers import inmuebles
-from routers import compradores, inmuebles, vendedores
 
 # Levantar el server: uvicorn main:app --reload
 # Detener el server: CTRL+C
@@ -27,20 +19,20 @@ from routers import compradores, inmuebles, vendedores
 
 app = FastAPI()
 
-origins = ["*"]
+# origins = ["*"]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
-app.include_router(inmuebles.router)
-app.include_router(compradores.router)
-app.include_router(vendedores.router)
+app.include_router(inmuebles)
+# app.include_router(compradores.router)
+# app.include_router(vendedores.router)
 
 
 # @app.get("/")
