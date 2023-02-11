@@ -15,7 +15,7 @@ class InmuebleModel(BaseModel):
     precio: str
     finalizado: str
     llaves: str
-    # fechaAlta: str
+    fechaAlta: str
 
 # class InmuebleUpdate(BaseModel): # Clase para el update
 #     tipologia: str = None

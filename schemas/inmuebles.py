@@ -1,5 +1,7 @@
 def inmuebleEntity(item) -> dict:
+    print('ooo', item['provincia'])
     return {
+        "id": str(item['_id']),
         "tipologia": item['tipologia'],
         "provincia": item['provincia'],
         "municipio": item['municipio'],
@@ -12,6 +14,8 @@ def inmuebleEntity(item) -> dict:
         "precio": item['precio'],
         "finalizado": item['finalizado'],
         "llaves": item['llaves'],
+        "fechaAlta": item['fechaAlta'],
     }
 def inmueblesEntity(entity) -> list:
-    [inmuebleEntity(item) for item in entity]
+    
+    return[inmuebleEntity(item) for item in entity]

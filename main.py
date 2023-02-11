@@ -30,12 +30,12 @@ app = FastAPI()
 # )
 
 
-# app.include_router(inmuebles)
+app.include_router(inmuebles)
 
 
 
 
-# @app.get("/")
+# @app.get("/inmuebles")
 # def read_root():
 #     return {"Hello": "World"}
 
