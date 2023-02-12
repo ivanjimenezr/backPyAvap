@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from routes.inmuebles import inmuebles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Levantar el server: uvicorn main:app --reload
@@ -19,15 +20,15 @@ from routes.inmuebles import inmuebles
 
 app = FastAPI()
 
-# origins = ["*"]
+origins = ["*"]
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 app.include_router(inmuebles)

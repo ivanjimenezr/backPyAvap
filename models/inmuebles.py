@@ -13,8 +13,8 @@ class InmuebleModel(BaseModel):
     inscripcionRegistro: str
     cru: str
     precio: str
-    finalizado: str
-    llaves: str
+    finalizado: int
+    llaves: int
     fechaAlta: str
 
 # class InmuebleUpdate(BaseModel): # Clase para el update
