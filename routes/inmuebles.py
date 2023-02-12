@@ -80,8 +80,10 @@ def delete_inmueble(id:str):
 
 # Servicio para actualizar inmueble por ID - GET
 @inmuebles.put("/inmuebles/{id}")
-async def up_inmueble(id:str, inmueble:InmuebleModel):
-    db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(inmueble)})
+async def up_inmueble(id:str, inmueble):
+    req = {k: v for k, v in inmueble.dict().items() if v is not None}
+    print('holaaaa')
+    db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
 
 # Servicio para UPDATE inmueble por ID - PATCH
