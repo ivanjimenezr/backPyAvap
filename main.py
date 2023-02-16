@@ -1,6 +1,14 @@
 from fastapi import FastAPI
 from routes.inmuebles import inmuebles
+from routes.vendedores import vendedores
+from routes.compradores import compradores
 from fastapi.middleware.cors import CORSMiddleware
+
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, A4
+
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 # Levantar el server: uvicorn main:app --reload
@@ -32,6 +40,8 @@ app.add_middleware(
 
 
 app.include_router(inmuebles)
+app.include_router(vendedores)
+app.include_router(compradores)
 
 
 

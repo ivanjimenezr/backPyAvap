@@ -44,5 +44,5 @@ db = db_client['Avap']
 # deta = Deta() 
 
 db_inmuebles = db.inmuebles #Nombre para la bbdd
-db_compradores = db.compradore #Nombre para la bbdd
+db_compradores = db.compradores #Nombre para la bbdd
 db_vendedores = db.vendedores #Nombre para la bbdd

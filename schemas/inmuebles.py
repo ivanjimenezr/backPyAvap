@@ -1,5 +1,4 @@
 def inmuebleEntity(item) -> dict:
-    print('ooo', item['provincia'])
     return {
         "id": str(item['_id']),
         "tipologia": item['tipologia'],
