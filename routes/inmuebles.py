@@ -9,7 +9,7 @@ from starlette.status import HTTP_204_NO_CONTENT
 # from fastapi.middleware.cors import CORSMiddleware
 # from deta import Deta
 # from db import client
-# import json
+import json
 
 ### Inmuebles API ###
 
@@ -80,10 +80,16 @@ def delete_inmueble(id:str):
 
 # Servicio para actualizar inmueble por ID - GET
 @inmuebles.put("/inmuebles/{id}")
-async def up_inmueble(id:str, inmueble):
+async def up_inmueble(id:str, inmueble:InmuebleModel):
     req = {k: v for k, v in inmueble.dict().items() if v is not None}
-    print('holaaaa')
     db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
+    return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
+
+# Servicio para finalizar inmueble por ID - GET
+@inmuebles.patch("/inmuebles/{id}")
+async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
+    req = {k: v for k, v in inmuebleFin.dict().items() if v is not None}
+    db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
 
 # Servicio para UPDATE inmueble por ID - PATCH
