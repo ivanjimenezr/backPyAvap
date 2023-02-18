@@ -46,3 +46,4 @@ db = db_client['Avap']
 db_inmuebles = db.inmuebles #Nombre para la bbdd
 db_compradores = db.compradores #Nombre para la bbdd
 db_vendedores = db.vendedores #Nombre para la bbdd
+db_asociaciones = db.asociaciones #Nombre para la bbdd

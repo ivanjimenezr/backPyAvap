@@ -11,7 +11,7 @@ def vendedorEntity(item) -> dict:
         "fechaNacimiento": item['fechaNacimiento'],
         "estadoCivil": item['estadoCivil'],
         "fechaAlta": item['fechaAlta'],
-        "finalizado": item['finalizado']
+        "finalizado": item['finalizado'],
     }
 def vendedoresEntity(entity) -> list:
     

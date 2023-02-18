@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional,List
 
 
 class InmuebleModel(BaseModel):
@@ -16,6 +16,8 @@ class InmuebleModel(BaseModel):
     finalizado: Optional[int]
     llaves: Optional[int]
     fechaAlta: Optional[str]
+    # vendedores: Optional[list]
+
 
 # class InmuebleUpdate(BaseModel): # Clase para el update
 #     tipologia: str = None

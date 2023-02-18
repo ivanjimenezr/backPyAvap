@@ -1,3 +1,4 @@
+from typing import Optional,List
 def inmuebleEntity(item) -> dict:
     return {
         "id": str(item['_id']),
@@ -14,6 +15,8 @@ def inmuebleEntity(item) -> dict:
         "finalizado": item['finalizado'],
         "llaves": item['llaves'],
         "fechaAlta": item['fechaAlta'],
+        # "vendedores": List(item['vendedores'])
+
     }
 def inmueblesEntity(entity) -> list:
     

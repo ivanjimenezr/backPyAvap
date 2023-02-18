@@ -1,8 +1,10 @@
 from fastapi import APIRouter,status, Response,BackgroundTasks
 from fastapi.responses import FileResponse
-from db.client import db_inmuebles
+from db.client import db_inmuebles, db_asociaciones
 from schemas.inmuebles import inmuebleEntity, inmueblesEntity
+from schemas.asociaciones import asociacionEntity,asociacionesEntity
 from models.inmuebles import InmuebleModel
+from models.asociaciones import AsociacioneModels
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 # from starlette.responses import FileResponse
@@ -83,6 +85,7 @@ def delete_inmueble(id:str):
 # Servicio para actualizar inmueble por ID - GET
 @inmuebles.put("/inmuebles/{id}")
 async def up_inmueble(id:str, inmueble:InmuebleModel):
+    print('inmuebleUP: ', inmueble)
     req = {k: v for k, v in inmueble.dict().items() if v is not None}
     db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
@@ -93,6 +96,37 @@ async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
     req = {k: v for k, v in inmuebleFin.dict().items() if v is not None}
     db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
+
+
+# Servicio para asociar vendedor a inmueble
+@inmuebles.post("/asociaVendedor/{id}")
+async def createAsociaVendedor(id,asociaVendedor:AsociacioneModels):
+    # print('asociaVendedor: ',asociaVendedor)
+    asociaVendedor_dic = dict(asociaVendedor)
+    hh = asociaVendedor_dic['idVendedor']
+    for vendedor in hh:
+        print(vendedor['id'])
+        # Preguntamos por si la asociacion ya existe
+        found = db_asociaciones.find_one({"idInmueble":id,"idVendedor":vendedor['id']})
+        if not found:
+            print('no existe asocio')
+            db_asociaciones.insert_one({"idInmueble":id,"idVendedor":vendedor['id']})
+            msn = 'No esta asociado, creo la asociación'
+        else:
+            print('Ya existe la asociacion')
+            print(found)
+            msn = 'Ya existe la asociacion'
+    return  msn
+ 
+# Servicio para devolver vendedores por inmueble
+@inmuebles.get("/asociaVendedor/{id}")
+async def getAsociaVendedor(id:str):
+    return   asociacionesEntity(db_asociaciones.find({"idInmueble": id}, {"idInmueble": 1,"idVendedor": 1}))
+    # return  db_asociaciones.find({"idInmueble": id},{"idVendedor":1})
+
+
+
+
 
 # Servicio para contrato arras
 @inmuebles.get("/inmuebles/arras/{id}")
