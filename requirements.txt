@@ -4,3 +4,4 @@ pymongo
 passlib
 python-dotenv
 reportlab
+uvicorn
