@@ -65,7 +65,7 @@ async def list_inmuebles():
 
 
 # Serviciopara crear inmueble - POST
-@inmuebles.post("/inmuebles", response_model=InmuebleModel)
+@inmuebles.post("/inmuebles", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def create_inmueble(inmueble: InmuebleModel):
     inmueble_dic = dict(inmueble)
     # del inmueble_dic['id']
@@ -75,19 +75,19 @@ async def create_inmueble(inmueble: InmuebleModel):
     
 
 # Servicio para devolver inmueble por ID - GET
-@inmuebles.get("/inmuebles/{id}")
+@inmuebles.get("/inmuebles/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def get_inmueble(id:str):
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
 
 # Servicio para borrar un inmueble por ID - DELETE
-@inmuebles.delete("/inmuebles/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@inmuebles.delete("/inmuebles/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 def delete_inmueble(id:str):
     found =  db_inmuebles.find_one_and_delete({"_id": ObjectId(id)})
     if not found:
         return {"error":"No se ha borrado el inmueble"}
 
 # Servicio para actualizar inmueble por ID - GET
-@inmuebles.put("/inmuebles/{id}")
+@inmuebles.put("/inmuebles/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def up_inmueble(id:str, inmueble:InmuebleModel):
     print('inmuebleUP: ', inmueble)
     req = {k: v for k, v in inmueble.dict().items() if v is not None}
@@ -95,7 +95,7 @@ async def up_inmueble(id:str, inmueble:InmuebleModel):
     return inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
 
 # Servicio para finalizar inmueble por ID - GET
-@inmuebles.patch("/inmuebles/{id}")
+@inmuebles.patch("/inmuebles/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
     req = {k: v for k, v in inmuebleFin.dict().items() if v is not None}
     db_inmuebles.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
@@ -103,7 +103,7 @@ async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
 
 
 # Servicio para asociar vendedor a inmueble
-@inmuebles.post("/asociaVendedor/{id}")
+@inmuebles.post("/asociaVendedor/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def createAsociaVendedor(id,asociaVendedor:AsociacioneModels):
     # print('asociaVendedor: ',asociaVendedor)
     asociaVendedor_dic = dict(asociaVendedor)
@@ -123,7 +123,7 @@ async def createAsociaVendedor(id,asociaVendedor:AsociacioneModels):
     return  msn
  
 # Servicio para devolver vendedores por inmueble
-@inmuebles.get("/asociaVendedor/{id}")
+@inmuebles.get("/asociaVendedor/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def getAsociaVendedor(id:str):
     return   asociacionesEntity(db_asociaciones.find({"idInmueble": id}, {"idInmueble": 1,"idVendedor": 1}))
     # return  db_asociaciones.find({"idInmueble": id},{"idVendedor":1})
@@ -133,7 +133,7 @@ async def getAsociaVendedor(id:str):
 
 
 # Servicio para contrato arras
-@inmuebles.get("/inmuebles/arras/{id}")
+@inmuebles.get("/inmuebles/arras/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def get_inmueble(id:str,background_tasks: BackgroundTasks):
     inmueble = inmuebleEntity( db_inmuebles.find_one({"_id": ObjectId(id)}))
     

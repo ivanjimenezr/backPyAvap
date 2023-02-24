@@ -1,4 +1,4 @@
-from fastapi import APIRouter,status, Response,BackgroundTasks
+from fastapi import APIRouter,status, Response,BackgroundTasks,Depends
 from fastapi.responses import FileResponse
 from db.client import db_vendedores
 from schemas.vendedores import vendedorEntity, vendedoresEntity
@@ -7,11 +7,8 @@ from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 # from starlette.responses import FileResponse
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
-
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.styles import getSampleStyleSheet
+from auth.auth_handler import signJWT
+from auth.auth_bearer import JWTBearer
 
 import io
 
@@ -57,7 +54,7 @@ async def list_vendedores():
 
 
 # Serviciopara crear vendedores - POST
-@vendedores.post("/vendedores", response_model=VendedorModel)
+@vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def create_vendedor(vendedor: VendedorModel):
     vendedor_dic = dict(vendedor)
     id = db_vendedores.insert_one(vendedor_dic).inserted_id
@@ -66,26 +63,26 @@ async def create_vendedor(vendedor: VendedorModel):
     
 
 # Servicio para devolver vendedor por ID - GET
-@vendedores.get("/vendedores/{id}")
+@vendedores.get("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def get_vendedor(id:str):
     return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 
 # Servicio para borrar un vendedor por ID - DELETE
-@vendedores.delete("/vendedores/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@vendedores.delete("/vendedores/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 def delete_vendedor(id:str):
     found =  db_vendedores.find_one_and_delete({"_id": ObjectId(id)})
     if not found:
         return {"error":"No se ha borrado el vendedor"}
 
 # Servicio para actualizar vendedor por ID - GET
-@vendedores.put("/vendedores/{id}")
+@vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def up_vendedor(id:str, vendedor:VendedorModel):
     req = {k: v for k, v in vendedor.dict().items() if v is not None}
     db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
     return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 
 # Servicio para finalizar vendedor por ID - GET
-@vendedores.patch("/vendedores/{id}")
+@vendedores.patch("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def finalizar_vendedor(id:str, vendedorFin:VendedorModel):
     req = {k: v for k, v in vendedorFin.dict().items() if v is not None}
     db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
