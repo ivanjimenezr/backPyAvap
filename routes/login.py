@@ -1,8 +1,8 @@
 from fastapi import APIRouter,status, Depends,Request
 from fastapi.responses import FileResponse
 from db.client import db_usuarios
-from schemas.usuarios import usuarioEntity, usuariosEntity
-from models.usuarios import UsuarioModel
+# from schemas.usuarios import usuarioEntity, usuariosEntity
+# from models.usuarios import UsuarioModel
 from models.jwt import JWT
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,9 +44,9 @@ usuarios = APIRouter()
 
 # app = FastAPI()
 
-@AuthJWT.load_config
-def get_config():
-    return JWT()
+# @AuthJWT.load_config
+# def get_config():
+#     return JWT()
 
 # @usuarios.exception_handler(AuthJWTException)
 # def authjwt_exception_handler(request: Request, exc: AuthJWTException):
@@ -55,12 +55,12 @@ def get_config():
 #         content={"detail": exc.message}
 #     )
 
-@usuarios.post('/login')
-def login(user: UsuarioModel, Authorize: AuthJWT = Depends()):
-    #user.username
-    #user.password
-    # this is the part where we will check the user credentials with our database record
-    #but since we are not going to use any db, straight away we will just create the token and send it back
-    # subject identifier for who this token is for example id or username from database
-    access_token = Authorize.create_access_token(subject=user.email)
-    return {"access_token": access_token}
+# @usuarios.post('/login')
+# def login(user: UsuarioModel, Authorize: AuthJWT = Depends()):
+#     #user.username
+#     #user.password
+#     # this is the part where we will check the user credentials with our database record
+#     #but since we are not going to use any db, straight away we will just create the token and send it back
+#     # subject identifier for who this token is for example id or username from database
+#     access_token = Authorize.create_access_token(subject=user.email)
+#     return {"access_token": access_token}

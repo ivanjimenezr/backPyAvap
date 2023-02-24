@@ -1,4 +1,4 @@
-from fastapi import APIRouter,status, Response,BackgroundTasks
+from fastapi import APIRouter,status, Response,BackgroundTasks, Depends
 from fastapi.responses import FileResponse
 from db.client import db_inmuebles, db_asociaciones
 from schemas.inmuebles import inmuebleEntity, inmueblesEntity
@@ -14,6 +14,9 @@ from reportlab.lib.pagesizes import letter, A4
 
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.styles import getSampleStyleSheet
+
+from auth.auth_handler import signJWT
+from auth.auth_bearer import JWTBearer
 
 import io
 
@@ -53,7 +56,8 @@ inmuebles = APIRouter()
 #     return {"Hello": "World2"}
 
 #Servicio para devolver todos los registros - GET
-@inmuebles.get("/inmuebles")
+@inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+# @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())])
 async def list_inmuebles():
     # inmuebles = db_inmuebles.find()
     
