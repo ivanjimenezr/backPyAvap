@@ -40,10 +40,11 @@ app.add_middleware(
 )
 
 
+
 app.include_router(inmuebles)
 app.include_router(vendedores)
 app.include_router(compradores)
-app.include_router(usuarios)
+# app.include_router(usuarios)
 
 
 

@@ -48,12 +48,12 @@ usuarios = APIRouter()
 def get_config():
     return JWT()
 
-@usuarios.exception_handler(AuthJWTException)
-def authjwt_exception_handler(request: Request, exc: AuthJWTException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.message}
-    )
+# @usuarios.exception_handler(AuthJWTException)
+# def authjwt_exception_handler(request: Request, exc: AuthJWTException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.message}
+#     )
 
 @usuarios.post('/login')
 def login(user: UsuarioModel, Authorize: AuthJWT = Depends()):
@@ -64,12 +64,3 @@ def login(user: UsuarioModel, Authorize: AuthJWT = Depends()):
     # subject identifier for who this token is for example id or username from database
     access_token = Authorize.create_access_token(subject=user.email)
     return {"access_token": access_token}
-
-
-@usuarios.get('/test-jwt')
-def user(Authorize: AuthJWT = Depends()):
-    
-    Authorize.jwt_required()
-    return {"user": 123124124, 'data': 'jwt test works'} 
-    #current_user = Authorize.get_jwt_subject()
-    #return {"user": current_user, 'data': 'jwt test works'}    
