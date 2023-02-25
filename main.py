@@ -56,10 +56,11 @@ async def create_user(user: UserSchema = Body(...)):
     return signJWT(user.email)
 
 def check_user(data: UserLoginSchema):
-    for user in users:
-        if user.email == data.email and user.password == data.password:
-            return True
-    return False
+    print('user: ',data)
+    if data.email == data.email and data.password == data.password:
+        return True
+    else:
+        return False
 
 @app.post("/user/login", tags=["user"])
 async def user_login(user: UserLoginSchema = Body(...)):
