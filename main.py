@@ -14,6 +14,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 from models.usuarios import PostSchema, UserSchema, UserLoginSchema
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
+from bson import ObjectId
+from db.client import db_usuarios
+
+
 
 
 # Levantar el server: uvicorn main:app --reload
@@ -58,7 +62,10 @@ async def create_user(user: UserSchema = Body(...)):
 def check_user(data: UserLoginSchema):
     print('user: ',data)
     if data.email == data.email and data.password == data.password:
-        return True
+        found =  db_usuarios.find_one({"email": data.email, "password":data.password})
+        if found:
+            print('encontrado')
+            return True
     else:
         return False
 

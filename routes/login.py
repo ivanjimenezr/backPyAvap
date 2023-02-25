@@ -13,6 +13,10 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 
 
+from models.usuarios import PostSchema, UserSchema, UserLoginSchema
+from auth.auth_handler import signJWT
+from auth.auth_bearer import JWTBearer
+
 
 
 
