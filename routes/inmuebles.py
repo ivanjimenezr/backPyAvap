@@ -56,7 +56,8 @@ inmuebles = APIRouter()
 #     return {"Hello": "World2"}
 
 #Servicio para devolver todos los registros - GET
-@inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+# @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+@inmuebles.get("/inmuebles", tags=["inmuebles"])
 # @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())])
 async def list_inmuebles():
     # inmuebles = db_inmuebles.find()
@@ -65,6 +66,7 @@ async def list_inmuebles():
 
 
 # Serviciopara crear inmueble - POST
+# @inmuebles.post("/inmuebles", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.post("/inmuebles", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def create_inmueble(inmueble: InmuebleModel):
     inmueble_dic = dict(inmueble)
@@ -87,7 +89,8 @@ def delete_inmueble(id:str):
         return {"error":"No se ha borrado el inmueble"}
 
 # Servicio para actualizar inmueble por ID - GET
-@inmuebles.put("/inmuebles/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+@inmuebles.put("/inmuebles/{id}")
+# @inmuebles.put("/inmuebles/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 async def up_inmueble(id:str, inmueble:InmuebleModel):
     print('inmuebleUP: ', inmueble)
     req = {k: v for k, v in inmueble.dict().items() if v is not None}
@@ -103,7 +106,8 @@ async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
 
 
 # Servicio para asociar vendedor a inmueble
-@inmuebles.post("/asociaVendedor/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+# @inmuebles.post("/asociaVendedor/{id}", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+@inmuebles.post("/asociaVendedor/{id}")
 async def createAsociaVendedor(id,asociaVendedor:AsociacioneModels):
     # print('asociaVendedor: ',asociaVendedor)
     asociaVendedor_dic = dict(asociaVendedor)

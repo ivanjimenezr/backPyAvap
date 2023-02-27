@@ -17,6 +17,13 @@ from auth.auth_bearer import JWTBearer
 from bson import ObjectId
 from db.client import db_usuarios
 
+import pymysql
+from dotenv import dotenv_values,load_dotenv
+import os
+
+load_dotenv('.env') 
+
+
 
 
 
@@ -76,6 +83,48 @@ async def user_login(user: UserLoginSchema = Body(...)):
     return {
         "error": "Wrong login details!"
     }
+
+
+connection = pymysql.connect(
+    host=os.environ.get("hostDB"),
+    user=os.environ.get("userDB"),
+    password=os.environ.get("passwordDB"),
+    database=os.environ.get("databaseDB"),
+    cursorclass=pymysql.cursors.DictCursor)
+
+with connection.cursor() as cursor:
+
+    try:
+        query = "SELECT * FROM avap.inmuebles"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        db = cursor.fetchall()
+        print("You're connected to database: ", db)
+        print(type(db))
+
+        response = {
+            "statusCode": 200,
+            "headers": {
+            "x-custom-header" : "custom header value",
+            "Access-Control-Allow-Origin": "*"
+        },
+        "body": JSON.stringify('Hello from Lambda!')
+        };
+        response;
+
+    except pymysql.Error as e:
+        print("Error while connecting to MySQL", e)
+    finally:
+        cursor.close()
+        connection.close()
+        print("MySQL connection is closed")
+
+# for k, v in os.environ.items():
+#     print(f'{k}={v}')
+
+
+
+
 
 
 
