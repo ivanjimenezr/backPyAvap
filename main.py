@@ -3,13 +3,14 @@ from routes.inmuebles import inmuebles
 from routes.vendedores import vendedores
 from routes.compradores import compradores
 from routes.login import usuarios
+from routes.createDocs import docs
 from fastapi.middleware.cors import CORSMiddleware
 
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+# from reportlab.pdfgen import canvas
+# from reportlab.lib.pagesizes import letter, A4
 
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.styles import getSampleStyleSheet
+# from reportlab.lib.styles import ParagraphStyle
+# from reportlab.lib.styles import getSampleStyleSheet
 
 from models.usuarios import PostSchema, UserSchema, UserLoginSchema
 from auth.auth_handler import signJWT
@@ -20,6 +21,7 @@ from db.client import db_usuarios
 import pymysql
 from dotenv import dotenv_values,load_dotenv
 import os
+import json
 
 load_dotenv('.env') 
 
@@ -59,6 +61,7 @@ users = []
 app.include_router(inmuebles)
 app.include_router(vendedores)
 app.include_router(compradores)
+app.include_router(docs)
 # app.include_router(usuarios)
 
 @app.post("/user/signup", tags=["user"])
@@ -84,40 +87,41 @@ async def user_login(user: UserLoginSchema = Body(...)):
         "error": "Wrong login details!"
     }
 
+@app.get("/test", tags=["user"])
+async def test():
+    connection = pymysql.connect(
+        host=os.environ.get("hostDB"),
+        user=os.environ.get("userDB"),
+        password=os.environ.get("passwordDB"),
+        database=os.environ.get("databaseDB"),
+        cursorclass=pymysql.cursors.DictCursor)
 
-connection = pymysql.connect(
-    host=os.environ.get("hostDB"),
-    user=os.environ.get("userDB"),
-    password=os.environ.get("passwordDB"),
-    database=os.environ.get("databaseDB"),
-    cursorclass=pymysql.cursors.DictCursor)
+    with connection.cursor() as cursor:
 
-with connection.cursor() as cursor:
+        try:
+            query = "SELECT * FROM avap.inmuebles"
+            cursor = connection.cursor()
+            cursor.execute(query)
+            db = cursor.fetchall()
+            print("You're connected to database: ", db)
+            print(type(db))
 
-    try:
-        query = "SELECT * FROM avap.inmuebles"
-        cursor = connection.cursor()
-        cursor.execute(query)
-        db = cursor.fetchall()
-        print("You're connected to database: ", db)
-        print(type(db))
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps(db)
+                }
+            return db
 
-        response = {
-            "statusCode": 200,
-            "headers": {
-            "x-custom-header" : "custom header value",
-            "Access-Control-Allow-Origin": "*"
-        },
-        "body": JSON.stringify('Hello from Lambda!')
-        };
-        response;
-
-    except pymysql.Error as e:
-        print("Error while connecting to MySQL", e)
-    finally:
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
+        except pymysql.Error as e:
+            print("Error while connecting to MySQL", e)
+        finally:
+            cursor.close()
+            connection.close()
+            print("MySQL connection is closed")
 
 # for k, v in os.environ.items():
 #     print(f'{k}={v}')

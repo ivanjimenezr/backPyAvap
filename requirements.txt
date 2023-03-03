@@ -1,8 +1,9 @@
 fastapi
 python-multipart
 pymongo
-passlib
 python-dotenv
-reportlab
 uvicorn
 fastapi-jwt-auth
+pymysql
+dotenv
+python-docx

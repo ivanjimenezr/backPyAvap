@@ -10,7 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 
-import io
+import pymysql.cursors
+from dotenv import dotenv_values,load_dotenv
+import os
+import json
+
+load_dotenv('.env') 
 
 # from fastapi.encoders import jsonable_encoder
 # from fastapi.responses import JSONResponse
@@ -50,22 +55,123 @@ vendedores = APIRouter()
 #Servicio para devolver todos los registros - GET
 @vendedores.get("/vendedores")
 async def list_vendedores():
-    return  vendedoresEntity(db_vendedores.find())
+    try:
+        connection = pymysql.connect(
+        host=os.environ.get("hostDB"),
+        user=os.environ.get("userDB"),
+        password=os.environ.get("passwordDB"),
+        database=os.environ.get("databaseDB"),
+        cursorclass=pymysql.cursors.DictCursor)
+
+        with connection.cursor() as cursor:
+            
+            query = "SELECT * FROM avap.vendedores"
+            cursor.execute(query)
+            db = cursor.fetchall()
+            print("Resultados de db: ", db)
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps(db)
+                }
+            return db
+    finally:
+        cursor.close()
+        connection.close()
+    # return  vendedoresEntity(db_vendedores.find())
 
 
 # Serviciopara crear vendedores - POST
-@vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+# @vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+@vendedores.post("/vendedores", response_model=VendedorModel)
 async def create_vendedor(vendedor: VendedorModel):
     vendedor_dic = dict(vendedor)
-    id = db_vendedores.insert_one(vendedor_dic).inserted_id
-    new_inmueble = db_vendedores.find_one({"_id": id})
-    return vendedorEntity(new_inmueble)
+
+    try:
+        connection = pymysql.connect(
+        host=os.environ.get("hostDB"),
+        user=os.environ.get("userDB"),
+        password=os.environ.get("passwordDB"),
+        database=os.environ.get("databaseDB"),
+        cursorclass=pymysql.cursors.DictCursor)
+
+        with connection.cursor() as cursor:
+            print('evento')
+            print(vendedor_dic)
+            nombre = vendedor_dic['nombre']
+            dni = vendedor_dic['dni']
+            direccion = vendedor_dic['direccion']
+            municipio = vendedor_dic['municipio']
+            provincia = vendedor_dic['provincia'] 
+            email = vendedor_dic['email'] 
+            telefono = vendedor_dic['telefono'] 
+            fechaNacimiento = vendedor_dic['fechaNacimiento']
+            estadoCivil = vendedor_dic['estadoCivil'] 
+            fechaAlta = vendedor_dic['fechaAlta'] 
+            finalizado = vendedor_dic['finalizado']
+            
+            
+            query = f"INSERT INTO avap.vendedores (nombre, dni, direccion, municipio, provincia, email, telefono, fechaNacimiento, estadoCivil, fechaAlta, finalizado) VALUES ('{nombre}', '{dni}', '{direccion}', '{municipio}', '{provincia}', '{email}', '{telefono}', '{fechaNacimiento}', '{estadoCivil}', '{fechaAlta}', {finalizado});"
+            print('query insert', query)
+            cursor.execute(query)
+            connection.commit()
+            idNewvendedor = cursor.lastrowid
+
+            msn = f'Se ha creado un nuevo vendedor con id {idNewvendedor}'
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps({"status":"suscess","results":msn})
+                }
+            return response
+            
+    finally:
+        cursor.close()
+        connection.close()
+    # id = db_vendedores.insert_one(vendedor_dic).inserted_id
+    # new_inmueble = db_vendedores.find_one({"_id": id})
+    # return vendedorEntity(new_inmueble)
     
 
 # Servicio para devolver vendedor por ID - GET
 @vendedores.get("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def get_vendedor(id:str):
-    return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
+    try:
+        connection = pymysql.connect(
+        host=os.environ.get("hostDB"),
+        user=os.environ.get("userDB"),
+        password=os.environ.get("passwordDB"),
+        database=os.environ.get("databaseDB"),
+        cursorclass=pymysql.cursors.DictCursor)
+
+        with connection.cursor() as cursor:
+            
+            query = f"SELECT * FROM avap.vendedores WHERE id = {id}"
+            cursor.execute(query)
+            db = cursor.fetchone()
+            print("Resultados de db: ", db)
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps(db)
+                }
+            return db
+    finally:
+        cursor.close()
+        connection.close()
+    # return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 
 # Servicio para borrar un vendedor por ID - DELETE
 @vendedores.delete("/vendedores/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
@@ -75,6 +181,7 @@ def delete_vendedor(id:str):
         return {"error":"No se ha borrado el vendedor"}
 
 # Servicio para actualizar vendedor por ID - GET
+# @vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 @vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 async def up_vendedor(id:str, vendedor:VendedorModel):
     req = {k: v for k, v in vendedor.dict().items() if v is not None}
@@ -82,7 +189,8 @@ async def up_vendedor(id:str, vendedor:VendedorModel):
     return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 
 # Servicio para finalizar vendedor por ID - GET
-@vendedores.patch("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+# @vendedores.patch("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+@vendedores.patch("/vendedores/{id}", tags=["vendedores"])
 async def finalizar_vendedor(id:str, vendedorFin:VendedorModel):
     req = {k: v for k, v in vendedorFin.dict().items() if v is not None}
     db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
