@@ -27,6 +27,7 @@ from dotenv import dotenv_values,load_dotenv
 import os   
 import json
 import io
+import ftplib
 
 load_dotenv('.env') 
 
@@ -58,6 +59,8 @@ docs = APIRouter()
 # db = deta.Base('inmuebles') #Nombrepara la bbdd
 
 # app = FastAPI()
+
+
 
 
 
@@ -124,13 +127,42 @@ async def docs_arras(id:int):
             bio = io.BytesIO()
             document.save(bio)  # save to memory stream
             bio.seek(0)  # rewind the stream
-            # response = HttpResponse(
-            #     bio.getvalue(),  # use the stream's contents
-            #     content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            # )
-            # response["Content-Disposition"] = 'attachment; filename = "Reporte.docx"'
-            # response["Content-Encoding"] = "UTF-8"
-            return FileResponse(bio, media_type='application/octet-stream')
+            
+
+            ### FTPPPPPPP --------------------------------------------
+
+            #domain name or server ip:
+            ftpHost = '217.160.32.229'
+            ftpPort = 21
+            ftpUname = 'avapagencia.com'
+            ftpPass = '_27Yvr3b'
+
+            ftp = ftplib.FTP(timeout=30)
+            ftp.connect(ftpHost, ftpPort)
+            ftp.login(ftpUname, ftpPass)
+
+            # fnames = ftp.nlst()
+
+            ftp.cwd("httpdocs/files")
+
+            localFilePath = 'arras.docx'
+
+            with open(localFilePath, 'rb') as file:
+                retCode =ftp.storbinary('STOR arras.docx', file, blocksize=1024*1024)
+
+            ftp.quit()
+
+            if retCode.startswith('256'):
+                print('upload success')
+            else:
+                print('upload not success...')
+
+            print('Ejwcucion completa')
+
+            ### FTPPPPPPP --------------------------------------------
+            
+            return f'https://pedantic-bardeen.217-160-32-229.plesk.page/files/{localFilePath}'
+            # return FileResponse(bio, media_type='application/octet-stream')
             # return StreamingResponse(bio.read(), media_type='application/octet-stream')
 
 

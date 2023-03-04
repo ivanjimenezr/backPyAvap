@@ -7,3 +7,4 @@ fastapi-jwt-auth
 pymysql
 dotenv
 python-docx
+pyftpdlib
