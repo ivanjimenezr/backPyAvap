@@ -209,8 +209,13 @@ async def create_inmueble(inmueble:InmuebleModel):
             dormitorios= inmueble['dormitorios']
             banos= inmueble['banos']
             exterior= inmueble['exterior']
+            operacion= inmueble['operacion']
+            cee= inmueble['cee']
+            cee= inmueble['cee']
+            descripcion= inmueble['descripcion']
+            ascensor= inmueble['ascensor']
             
-            query = f"INSERT INTO avap.inmuebles (tipologia, provincia, municipio, direccion, refCatastral, superficie, descripNotaSimple, inscripcionRegistro, cru, precio, finalizado, llaves, fechaAlta, comisionVen,comisionCom,observaciones,comercial,dormitorios,banos,exterior) VALUES ('{tipologia}', '{provincia}', '{municipio}', '{direccion}', '{refCatastral}', '{superficie}', '{descripNotaSimple}', '{inscripcionRegistro}', '{cru}', '{precio}', '{finalizado}', '{llaves}', '{fechaAlta}', '{comisionVen}', '{comisionCom}', '{observaciones}', '{comercial}', '{dormitorios}', '{banos}', '{exterior}');"
+            query = f"INSERT INTO avap.inmuebles (tipologia, provincia, municipio, direccion, refCatastral, superficie, descripNotaSimple, inscripcionRegistro, cru, precio, finalizado, llaves, fechaAlta, comisionVen,comisionCom,observaciones,comercial,dormitorios,banos,exterior,operacion,cee,descripcion,ascensor) VALUES ('{tipologia}', '{provincia}', '{municipio}', '{direccion}', '{refCatastral}', '{superficie}', '{descripNotaSimple}', '{inscripcionRegistro}', '{cru}', '{precio}', '{finalizado}', '{llaves}', '{fechaAlta}', '{comisionVen}', '{comisionCom}', '{observaciones}', '{comercial}', '{dormitorios}', '{banos}', '{exterior}', '{operacion}', '{cee}', '{descripcion}', '{ascensor}');"
             print('query insert', query)
             cursor.execute(query)
             connection.commit()
@@ -293,8 +298,12 @@ async def up_inmueble(id:str, inmueble:InmuebleModel):
             dormitorios= inmueble['dormitorios']
             banos= inmueble['banos']
             exterior= inmueble['exterior']
+            operacion= inmueble['operacion']
+            cee= inmueble['cee']
+            descripcion= inmueble['descripcion']
+            ascensor= inmueble['ascensor']
             
-            query = f"UPDATE avap.inmuebles SET tipologia = '{tipologia}', provincia = '{provincia}', municipio = '{municipio}', direccion = '{direccion}', refCatastral = '{refCatastral}', superficie = '{superficie}', descripNotaSimple = '{descripNotaSimple}', inscripcionRegistro = '{inscripcionRegistro}', cru = '{cru}', precio = '{precio}', finalizado = {finalizado}, llaves = {llaves}, fechaAlta = '{fechaAlta}', comisionVen = '{comisionVen}', comisionCom = '{comisionCom}', observaciones = '{observaciones}', comercial = '{comercial}', dormitorios = '{dormitorios}', banos = '{banos}', exterior = '{exterior}' WHERE id = {id};"
+            query = f"UPDATE avap.inmuebles SET tipologia = '{tipologia}', provincia = '{provincia}', municipio = '{municipio}', direccion = '{direccion}', refCatastral = '{refCatastral}', superficie = '{superficie}', descripNotaSimple = '{descripNotaSimple}', inscripcionRegistro = '{inscripcionRegistro}', cru = '{cru}', precio = '{precio}', finalizado = {finalizado}, llaves = {llaves}, fechaAlta = '{fechaAlta}', comisionVen = '{comisionVen}', comisionCom = '{comisionCom}', observaciones = '{observaciones}', comercial = '{comercial}', dormitorios = '{dormitorios}', banos = '{banos}', exterior = '{exterior}', operacion = '{operacion}', cee = '{cee}', descripcion = '{descripcion}', ascensor = '{ascensor}' WHERE id = {id};"
             print('query insert', query)
             cursor.execute(query)
             connection.commit()

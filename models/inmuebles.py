@@ -23,6 +23,10 @@ class InmuebleModel(BaseModel):
     comercial: Optional[str]
     observaciones: Optional[str]
     comisionCom: Optional[str]
+    operacion: Optional[str]
+    cee: Optional[str]
+    descripcion: Optional[str]
+    ascensor: Optional[str]
 
     # vendedores: Optional[list]
 
