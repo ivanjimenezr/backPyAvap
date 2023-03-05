@@ -15,6 +15,12 @@ def inmuebleEntity(item) -> dict:
         "finalizado": item['finalizado'],
         "llaves": item['llaves'],
         "fechaAlta": item['fechaAlta'],
+        "dormitorios": item['dormitorios'],
+        "banos": item['banos'],
+        "exterior": item['exterior'],
+        "comision": item['comision'],
+        "comercial": item['comercial'],
+        "observaciones": item['observaciones'],
         # "vendedores": List(item['vendedores'])
 
     }

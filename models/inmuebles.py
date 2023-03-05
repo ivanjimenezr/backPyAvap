@@ -16,6 +16,13 @@ class InmuebleModel(BaseModel):
     finalizado: Optional[int]
     llaves: Optional[int]
     fechaAlta: Optional[str]
+    dormitorios: Optional[str]
+    banos: Optional[str]
+    exterior: Optional[str]
+    comision: Optional[str]
+    comercial: Optional[str]
+    observaciones: Optional[str]
+
     # vendedores: Optional[list]
 
 
