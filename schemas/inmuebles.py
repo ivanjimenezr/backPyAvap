@@ -18,9 +18,10 @@ def inmuebleEntity(item) -> dict:
         "dormitorios": item['dormitorios'],
         "banos": item['banos'],
         "exterior": item['exterior'],
-        "comision": item['comision'],
+        "comisionVen": item['comisionVen'],
         "comercial": item['comercial'],
         "observaciones": item['observaciones'],
+        "comisionCom": item['comisionCom'],
         # "vendedores": List(item['vendedores'])
 
     }

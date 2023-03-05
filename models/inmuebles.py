@@ -19,9 +19,10 @@ class InmuebleModel(BaseModel):
     dormitorios: Optional[str]
     banos: Optional[str]
     exterior: Optional[str]
-    comision: Optional[str]
+    comisionVen: Optional[str]
     comercial: Optional[str]
     observaciones: Optional[str]
+    comisionCom: Optional[str]
 
     # vendedores: Optional[list]
 
