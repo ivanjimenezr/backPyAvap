@@ -74,12 +74,48 @@ async def create_user(user: UserSchema = Body(...)):
 def check_user(data: UserLoginSchema):
     print('user: ',data)
     if data.email == data.email and data.password == data.password:
-        found =  db_usuarios.find_one({"email": data.email, "password":data.password})
-        if found:
-            print('encontrado')
-            return True
-    else:
-        return False
+        connection = pymysql.connect(
+        host=os.environ.get("hostDB"),
+        user=os.environ.get("userDB"),
+        password=os.environ.get("passwordDB"),
+        database=os.environ.get("databaseDB"),
+        cursorclass=pymysql.cursors.DictCursor)
+
+    with connection.cursor() as cursor:
+
+        try:
+            query = f"SELECT * FROM avap.usuarios where email = '{data.email}' and password = '{data.password}"
+            cursor = connection.cursor()
+            cursor.execute(query)
+            db = cursor.fetchone()
+            print("You're connected to database: ", db)
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps(db)
+                }
+            if db:
+                print('encontrado')
+                return True
+            else:
+                return False
+
+        except pymysql.Error as e:
+            print("Error while connecting to MySQL", e)
+        finally:
+            cursor.close()
+            connection.close()
+
+        # found =  db_usuarios.find_one({"email": data.email, "password":data.password})
+        # if found:
+        #     print('encontrado')
+        #     return True
+        # else:
+        #     return False
 
 @app.post("/user/login", tags=["user"])
 async def user_login(user: UserLoginSchema = Body(...)):
