@@ -5,6 +5,6 @@ python-dotenv
 uvicorn
 fastapi-jwt-auth
 pymysql
-dotenv
 python-docx
 pyftpdlib
+pydantic[email]
