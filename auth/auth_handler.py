@@ -9,8 +9,8 @@ from decouple import config
 # config = dotenv_values('.env')
 
 
-JWT_SECRET = config("secret")
-JWT_ALGORITHM = config("algorithm")
+JWT_SECRET = os.environ.get("secret")
+JWT_ALGORITHM = os.environ.get("algorithm")
 
 
 def token_response(token: str):
