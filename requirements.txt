@@ -9,3 +9,4 @@ sshtunnel
 mysql.connector
 python-docx
 pyftpdlib
+pydantic[email]
