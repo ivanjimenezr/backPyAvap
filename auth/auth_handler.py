@@ -2,15 +2,16 @@ import time
 from typing import Dict
 
 import jwt
-from decouple import config
+# from decouple import config
+import os
 
-# from dotenv import dotenv_values
+from dotenv import dotenv_values
 
-# config = dotenv_values('.env')
+config = dotenv_values('.env')
 
 
-JWT_SECRET = config("secret")
-JWT_ALGORITHM = config("algorithm")
+JWT_SECRET = os.environ.get("secret")
+JWT_ALGORITHM = os.environ.get("algorithm")
 
 
 def token_response(token: str):

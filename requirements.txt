@@ -5,6 +5,7 @@ python-dotenv
 uvicorn
 fastapi-jwt-auth
 pymysql
-dotenv
+sshtunnel
+mysql.connector
 python-docx
 pyftpdlib

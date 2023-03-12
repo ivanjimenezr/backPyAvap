@@ -12,7 +12,6 @@ try:
                               ssh_username=os.environ.get("ssh_username"),
                               ssh_password=os.environ.get("ssh_password"),
                               ssh_proxy_enabled=os.environ.get("ssh_proxy_enabled"),
-                            #   remote_bind_address=os.environ.get("remote_bind_address")
                               remote_bind_address=('localhost',3306)
                               )
     server.start()
@@ -28,33 +27,58 @@ try:
         port=server.local_bind_port,
         connection_timeout=180
     )
-    if con!=None:
+    if con != None:
         print('To mysql Database Connected')
     else:
         print('Mysql not connected')
 
     cursor=con.cursor()
     # with con.cursor() as cursor:
-            
-    query = "SELECT * FROM inmuebles"
+    def get_all_inmuebles():
+        query = "SELECT * FROM avap.inmuebles"
+    
     # global connection timeout arguments
-    global_connect_timeout = 'SET GLOBAL connect_timeout=180'
-    global_wait_timeout = 'SET GLOBAL connect_timeout=180'
-    global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
 
-    cursor.execute(global_connect_timeout)
-    cursor.execute(global_wait_timeout)
-    cursor.execute(global_interactive_timeout)
-    cursor.execute(query)
-    db = cursor.fetchall()
-    # print("Resultados de db: ", db)
-    for row in db:
-        print(row[1])
-    # cursor.execute('SELECT * FROM inmuebles')
-    # rows=cursor.fetchall()
-    # print(rows)
-# for row in rows:
-#     print(row)
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchall()
+        return db
+    
+    def get_inmueble_id(id):
+        query = f"SELECT * FROM avap.inmuebles WHERE id={id}"
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        return db
+
+    # jj = get_all_inmuebles()
+    # print(jj)
+
+    inmueble = get_inmueble_id(1)
+    print(inmueble)
+
+    
+    ################################
+    ## IMPORTANT ##
+    ################################
+    # Call upon the class like this:
+
+    # import db
+    # inmuebles = db.get_all_inmuebles()
+   
 
 except BaseException as e:
     print('El problema con --> ', e)

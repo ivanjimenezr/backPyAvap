@@ -115,6 +115,7 @@ async def list_inmuebles():
     finally:
         cursor.close()
         connection.close()
+    # return  inmueblesEntity(db_inmuebles.find())
 
 
     #Servicio para devolver todos los registros - GET
