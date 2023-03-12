@@ -94,17 +94,18 @@ async def list_inmuebles():
     allInmuebles = []
     for nn in allInmu:
         print('kk',nn)
-        idInmueble = nn[0]
+        idInmueble = nn['id']
         print('idInmueble: ', idInmueble)
         # query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {idInmueble});"
         # cursor.execute(query2)
         # dbVendedores = cursor.fetchall()
+        
         dbVendedores = dataBase.get_vendedor_id_inmuebles(idInmueble)
-        # if dbVendedores:
-        #     nn['vendedores'] = dbVendedores
-        # else:
-        #     nn['vendedores'] = []
-        # allInmuebles.append(nn)
+        if dbVendedores:
+            nn['vendedores'] = dbVendedores
+        else:
+            nn['vendedores'] = []
+        allInmuebles.append(nn)
         
         # print('llll',allInmuebles)
 
@@ -131,48 +132,50 @@ async def list_inmuebles():
 # @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.get("/inmuebles/{id}", tags=["inmuebles"])
 async def list_inmuebles(id:int):
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    db = dataBase.get_inmueble_id(id)
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
+    #     with connection.cursor() as cursor:
             
-            query = f"SELECT * FROM avap.inmuebles where id = {id}"
-            cursor.execute(query)
-            db = cursor.fetchone()
-            print("Resultados de db: ", db)
+    #         query = f"SELECT * FROM avap.inmuebles where id = {id}"
+    #         cursor.execute(query)
+    #         db = cursor.fetchone()
+    #         print("Resultados de db: ", db)
 
 
             
             
-            print('idInmueble: ', id)
-            query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {id});"
-            cursor.execute(query2)
-            dbVendedores = cursor.fetchall()
-            if dbVendedores:
-                db['vendedores'] = dbVendedores
-            else:
-                db['vendedores'] = []
-            
-            # print('llll',allInmuebles)
+    # print('idInmueble: ', id)
+    # query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {id});"
+    # cursor.execute(query2)
+    # dbVendedores = cursor.fetchall()
+    dbVendedores = dataBase.get_vendedor_id_inmuebles(id)
+    if dbVendedores:
+        db['vendedores'] = dbVendedores
+    else:
+        db['vendedores'] = []
+    
+    # print('llll',allInmuebles)
 
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-    finally:
-        cursor.close()
-        connection.close()
+    response = {
+        "headers": {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': True
+        },
+        "statusCode": 200,
+        'body': json.dumps(db)
+        }
+    return db
+    # finally:
+    #     cursor.close()
+    #     connection.close()
 
     
 
