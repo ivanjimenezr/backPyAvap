@@ -6,7 +6,7 @@ from models.vendedores import VendedorModel
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
 # from starlette.responses import FileResponse
-
+import db.ConnToMysql as dataBase
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 
@@ -55,33 +55,43 @@ vendedores = APIRouter()
 #Servicio para devolver todos los registros - GET
 @vendedores.get("/vendedores")
 async def list_vendedores():
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    allVende = dataBase.get_all_vendedores()
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(allVende)
+            }
+    return allVende
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
+    #     with connection.cursor() as cursor:
             
-            query = "SELECT * FROM avap.vendedores"
-            cursor.execute(query)
-            db = cursor.fetchall()
-            print("Resultados de db: ", db)
+    #         query = "SELECT * FROM avap.vendedores"
+    #         cursor.execute(query)
+    #         db = cursor.fetchall()
+    #         print("Resultados de db: ", db)
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-    finally:
-        cursor.close()
-        connection.close()
+    #         response = {
+    #             "headers": {
+    #             'Access-Control-Allow-Origin': '*',
+    #             'Access-Control-Allow-Credentials': True
+    #             },
+    #             "statusCode": 200,
+    #             'body': json.dumps(db)
+    #             }
+    #         return db
+    # finally:
+    #     cursor.close()
+    #     connection.close()
     # return  vendedoresEntity(db_vendedores.find())
 
 

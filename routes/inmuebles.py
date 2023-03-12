@@ -7,6 +7,8 @@ from models.inmuebles import InmuebleModel
 from models.asociaciones import AsociacioneModels
 from bson import ObjectId
 from fastapi.middleware.cors import CORSMiddleware
+
+import db.ConnToMysql as dataBase
 # from starlette.responses import FileResponse
 
 # from reportlab.pdfgen import canvas
@@ -72,49 +74,53 @@ inmuebles = APIRouter()
 # @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.get("/inmuebles", tags=["inmuebles"])
 async def list_inmuebles():
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    # try:
+    allInmu = dataBase.get_all_inmuebles()
+    
+    # connection = pymysql.connect(
+    # host=os.environ.get("hostDB"),
+    # user=os.environ.get("userDB"),
+    # password=os.environ.get("passwordDB"),
+    # database=os.environ.get("databaseDB"),
+    # cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
-            
-            query = "SELECT * FROM avap.inmuebles"
-            cursor.execute(query)
-            db = cursor.fetchall()
-            # print("Resultados de db: ", db)
+    # with connection.cursor() as cursor:
+        
+    #     query = "SELECT * FROM avap.inmuebles"
+    #     cursor.execute(query)
+    #     db = cursor.fetchall()
+        # print("Resultados de db: ", db)
 
-            allInmuebles = []
-            for nn in db:
-                idInmueble = nn['id']
-                print('idInmueble: ', idInmueble)
-                query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {idInmueble});"
-                cursor.execute(query2)
-                dbVendedores = cursor.fetchall()
-                if dbVendedores:
-                    nn['vendedores'] = dbVendedores
-                else:
-                    nn['vendedores'] = []
-                allInmuebles.append(nn)
-            
-            # print('llll',allInmuebles)
+    allInmuebles = []
+    for nn in allInmu:
+        print('kk',nn)
+        idInmueble = nn[0]
+        print('idInmueble: ', idInmueble)
+        # query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {idInmueble});"
+        # cursor.execute(query2)
+        # dbVendedores = cursor.fetchall()
+        dbVendedores = dataBase.get_vendedor_id_inmuebles(idInmueble)
+        # if dbVendedores:
+        #     nn['vendedores'] = dbVendedores
+        # else:
+        #     nn['vendedores'] = []
+        # allInmuebles.append(nn)
+        
+        # print('llll',allInmuebles)
 
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-    finally:
-        cursor.close()
-        connection.close()
+        response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(allInmu)
+            }
+        return allInmu
+    # finally:
+    #     cursor.close()
+    #     connection.close()
     # return  inmueblesEntity(db_inmuebles.find())
 
 
