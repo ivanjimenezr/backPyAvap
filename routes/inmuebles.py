@@ -274,65 +274,68 @@ async def create_inmueble(inmueble:InmuebleModel):
 @inmuebles.post("/inmuebles/{id}")
 async def up_inmueble(id:str, inmueble:InmuebleModel):
     inmueble = dict(inmueble)
-    print('inmueble', inmueble)
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    db = dataBase.up_inmueble_id(id, inmueble)
 
-        with connection.cursor() as cursor:
-            print('evento')
-            print(inmueble)
-            print('eventotipo')
-            print(type(inmueble))
-            tipologia = inmueble['tipologia']
-            provincia = inmueble['provincia']
-            municipio = inmueble['municipio']
-            direccion = inmueble['direccion']
-            refCatastral = inmueble['refCatastral'] 
-            superficie = inmueble['superficie'] 
-            descripNotaSimple = inmueble['descripNotaSimple'] 
-            inscripcionRegistro = inmueble['inscripcionRegistro']
-            cru = inmueble['cru'] 
-            precio = inmueble['precio'] 
-            finalizado = inmueble['finalizado']
-            llaves = inmueble['llaves']
-            fechaAlta= inmueble['fechaAlta']
-            comisionVen= inmueble['comisionVen']
-            comisionCom= inmueble['comisionCom']
-            observaciones= inmueble['observaciones']
-            comercial= inmueble['comercial']
-            dormitorios= inmueble['dormitorios']
-            banos= inmueble['banos']
-            exterior= inmueble['exterior']
-            operacion= inmueble['operacion']
-            cee= inmueble['cee']
-            descripcion= inmueble['descripcion']
-            ascensor= inmueble['ascensor']
+    
+    # print('inmueble', inmueble)
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
+
+    #     with connection.cursor() as cursor:
+    #         print('evento')
+    #         print(inmueble)
+    #         print('eventotipo')
+    #         print(type(inmueble))
+    #         tipologia = inmueble['tipologia']
+    #         provincia = inmueble['provincia']
+    #         municipio = inmueble['municipio']
+    #         direccion = inmueble['direccion']
+    #         refCatastral = inmueble['refCatastral'] 
+    #         superficie = inmueble['superficie'] 
+    #         descripNotaSimple = inmueble['descripNotaSimple'] 
+    #         inscripcionRegistro = inmueble['inscripcionRegistro']
+    #         cru = inmueble['cru'] 
+    #         precio = inmueble['precio'] 
+    #         finalizado = inmueble['finalizado']
+    #         llaves = inmueble['llaves']
+    #         fechaAlta= inmueble['fechaAlta']
+    #         comisionVen= inmueble['comisionVen']
+    #         comisionCom= inmueble['comisionCom']
+    #         observaciones= inmueble['observaciones']
+    #         comercial= inmueble['comercial']
+    #         dormitorios= inmueble['dormitorios']
+    #         banos= inmueble['banos']
+    #         exterior= inmueble['exterior']
+    #         operacion= inmueble['operacion']
+    #         cee= inmueble['cee']
+    #         descripcion= inmueble['descripcion']
+    #         ascensor= inmueble['ascensor']
             
-            query = f"UPDATE avap.inmuebles SET tipologia = '{tipologia}', provincia = '{provincia}', municipio = '{municipio}', direccion = '{direccion}', refCatastral = '{refCatastral}', superficie = '{superficie}', descripNotaSimple = '{descripNotaSimple}', inscripcionRegistro = '{inscripcionRegistro}', cru = '{cru}', precio = '{precio}', finalizado = {finalizado}, llaves = {llaves}, fechaAlta = '{fechaAlta}', comisionVen = '{comisionVen}', comisionCom = '{comisionCom}', observaciones = '{observaciones}', comercial = '{comercial}', dormitorios = '{dormitorios}', banos = '{banos}', exterior = '{exterior}', operacion = '{operacion}', cee = '{cee}', descripcion = '{descripcion}', ascensor = '{ascensor}' WHERE id = {id};"
-            print('query insert', query)
-            cursor.execute(query)
-            connection.commit()
+    #         query = f"UPDATE avap.inmuebles SET tipologia = '{tipologia}', provincia = '{provincia}', municipio = '{municipio}', direccion = '{direccion}', refCatastral = '{refCatastral}', superficie = '{superficie}', descripNotaSimple = '{descripNotaSimple}', inscripcionRegistro = '{inscripcionRegistro}', cru = '{cru}', precio = '{precio}', finalizado = {finalizado}, llaves = {llaves}, fechaAlta = '{fechaAlta}', comisionVen = '{comisionVen}', comisionCom = '{comisionCom}', observaciones = '{observaciones}', comercial = '{comercial}', dormitorios = '{dormitorios}', banos = '{banos}', exterior = '{exterior}', operacion = '{operacion}', cee = '{cee}', descripcion = '{descripcion}', ascensor = '{ascensor}' WHERE id = {id};"
+    #         print('query insert', query)
+    #         cursor.execute(query)
+    #         connection.commit()
 
-            msn = f'Se ha actualizado el inmueble con id {id}'
+    #         msn = f'Se ha actualizado el inmueble con id {id}'
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps({"status":"suscess","results":msn})
-                }
-            return response
+    #         response = {
+    #             "headers": {
+    #             'Access-Control-Allow-Origin': '*',
+    #             'Access-Control-Allow-Credentials': True
+    #             },
+    #             "statusCode": 200,
+    #             'body': json.dumps({"status":"suscess","results":msn})
+    #             }
+    #         return response
         
-    finally:
-        cursor.close()
-        connection.close()
+    # finally:
+    #     cursor.close()
+    #     connection.close()
     
 
 # Servicio para finalizar inmueble por ID - GET
