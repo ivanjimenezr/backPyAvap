@@ -15,6 +15,8 @@ from dotenv import dotenv_values,load_dotenv
 import os
 import json
 
+import db.ConnToMysql as dataBase
+
 load_dotenv('.env') 
 # deta --help 
 
@@ -23,33 +25,45 @@ comerciales = APIRouter()
 #Servicio para devolver todos los registros - GET
 @comerciales.get("/comerciales")
 async def list_comerciales():
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    comerciales = dataBase.get_all_comerciales()
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(comerciales)
+            }
+    return comerciales
 
-        with connection.cursor() as cursor:
+
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
+
+    #     with connection.cursor() as cursor:
             
-            query = "SELECT * FROM avap.comerciales"
-            cursor.execute(query)
-            db = cursor.fetchall()
-            print("Resultados de db: ", db)
+    #         query = "SELECT * FROM avap.comerciales"
+    #         cursor.execute(query)
+    #         db = cursor.fetchall()
+    #         print("Resultados de db: ", db)
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-    finally:
-        cursor.close()
-        connection.close()
+    #         response = {
+    #             "headers": {
+    #             'Access-Control-Allow-Origin': '*',
+    #             'Access-Control-Allow-Credentials': True
+    #             },
+    #             "statusCode": 200,
+    #             'body': json.dumps(db)
+    #             }
+    #         return db
+    # finally:
+    #     cursor.close()
+    #     connection.close()
     # return  vendedoresEntity(db_vendedores.find())
 
 

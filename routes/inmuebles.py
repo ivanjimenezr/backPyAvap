@@ -74,32 +74,12 @@ inmuebles = APIRouter()
 # @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.get("/inmuebles", tags=["inmuebles"])
 async def list_inmuebles():
-    # try:
     allInmu = dataBase.get_all_inmuebles()
     
-    # connection = pymysql.connect(
-    # host=os.environ.get("hostDB"),
-    # user=os.environ.get("userDB"),
-    # password=os.environ.get("passwordDB"),
-    # database=os.environ.get("databaseDB"),
-    # cursorclass=pymysql.cursors.DictCursor)
-
-    # with connection.cursor() as cursor:
-        
-    #     query = "SELECT * FROM avap.inmuebles"
-    #     cursor.execute(query)
-    #     db = cursor.fetchall()
-        # print("Resultados de db: ", db)
-
     allInmuebles = []
     for nn in allInmu:
-        print('kk',nn)
         idInmueble = nn['id']
-        print('idInmueble: ', idInmueble)
-        # query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {idInmueble});"
-        # cursor.execute(query2)
-        # dbVendedores = cursor.fetchall()
-        
+       
         dbVendedores = dataBase.get_vendedor_id_inmuebles(idInmueble)
         if dbVendedores:
             nn['vendedores'] = dbVendedores
@@ -107,9 +87,6 @@ async def list_inmuebles():
             nn['vendedores'] = []
         allInmuebles.append(nn)
         
-        # print('llll',allInmuebles)
-
-
         response = {
             "headers": {
             'Access-Control-Allow-Origin': '*',
@@ -133,37 +110,13 @@ async def list_inmuebles():
 @inmuebles.get("/inmuebles/{id}", tags=["inmuebles"])
 async def list_inmuebles(id:int):
     db = dataBase.get_inmueble_id(id)
-    # try:
-    #     connection = pymysql.connect(
-    #     host=os.environ.get("hostDB"),
-    #     user=os.environ.get("userDB"),
-    #     password=os.environ.get("passwordDB"),
-    #     database=os.environ.get("databaseDB"),
-    #     cursorclass=pymysql.cursors.DictCursor)
-
-    #     with connection.cursor() as cursor:
-            
-    #         query = f"SELECT * FROM avap.inmuebles where id = {id}"
-    #         cursor.execute(query)
-    #         db = cursor.fetchone()
-    #         print("Resultados de db: ", db)
-
-
-            
-            
-    # print('idInmueble: ', id)
-    # query2 = f"SELECT * FROM avap.vendedores where id IN (SELECT idVendedor FROM avap.asociaciones WHERE idInmueble = {id});"
-    # cursor.execute(query2)
-    # dbVendedores = cursor.fetchall()
+    
     dbVendedores = dataBase.get_vendedor_id_inmuebles(id)
     if dbVendedores:
         db['vendedores'] = dbVendedores
     else:
         db['vendedores'] = []
     
-    # print('llll',allInmuebles)
-
-
     response = {
         "headers": {
         'Access-Control-Allow-Origin': '*',
@@ -173,9 +126,6 @@ async def list_inmuebles(id:int):
         'body': json.dumps(db)
         }
     return db
-    # finally:
-    #     cursor.close()
-    #     connection.close()
 
     
 
@@ -185,67 +135,67 @@ async def list_inmuebles(id:int):
 @inmuebles.post("/inmuebles")
 async def create_inmueble(inmueble:InmuebleModel):
     inmueble = dict(inmueble)
-    print('inmueble', inmueble)
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    dataBase.create_inmueble(inmueble)
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
-            print('evento')
-            print(inmueble)
-            print('eventotipo')
-            print(type(inmueble))
-            tipologia = inmueble['tipologia']
-            provincia = inmueble['provincia']
-            municipio = inmueble['municipio']
-            direccion = inmueble['direccion']
-            refCatastral = inmueble['refCatastral'] 
-            superficie = inmueble['superficie'] 
-            descripNotaSimple = inmueble['descripNotaSimple'] 
-            inscripcionRegistro = inmueble['inscripcionRegistro']
-            cru = inmueble['cru'] 
-            precio = inmueble['precio'] 
-            finalizado = inmueble['finalizado']
-            llaves = inmueble['llaves']
-            fechaAlta= inmueble['fechaAlta']
-            comisionVen= inmueble['comisionVen']
-            comisionCom= inmueble['comisionCom']
-            observaciones= inmueble['observaciones']
-            comercial= inmueble['comercial']
-            dormitorios= inmueble['dormitorios']
-            banos= inmueble['banos']
-            exterior= inmueble['exterior']
-            operacion= inmueble['operacion']
-            cee= inmueble['cee']
-            cee= inmueble['cee']
-            descripcion= inmueble['descripcion']
-            ascensor= inmueble['ascensor']
+    #     with connection.cursor() as cursor:
+    #         print('evento')
+    #         print(inmueble)
+    #         print('eventotipo')
+    #         print(type(inmueble))
+    #         tipologia = inmueble['tipologia']
+    #         provincia = inmueble['provincia']
+    #         municipio = inmueble['municipio']
+    #         direccion = inmueble['direccion']
+    #         refCatastral = inmueble['refCatastral'] 
+    #         superficie = inmueble['superficie'] 
+    #         descripNotaSimple = inmueble['descripNotaSimple'] 
+    #         inscripcionRegistro = inmueble['inscripcionRegistro']
+    #         cru = inmueble['cru'] 
+    #         precio = inmueble['precio'] 
+    #         finalizado = inmueble['finalizado']
+    #         llaves = inmueble['llaves']
+    #         fechaAlta= inmueble['fechaAlta']
+    #         comisionVen= inmueble['comisionVen']
+    #         comisionCom= inmueble['comisionCom']
+    #         observaciones= inmueble['observaciones']
+    #         comercial= inmueble['comercial']
+    #         dormitorios= inmueble['dormitorios']
+    #         banos= inmueble['banos']
+    #         exterior= inmueble['exterior']
+    #         operacion= inmueble['operacion']
+    #         cee= inmueble['cee']
+    #         cee= inmueble['cee']
+    #         descripcion= inmueble['descripcion']
+    #         ascensor= inmueble['ascensor']
             
-            query = f"INSERT INTO avap.inmuebles (tipologia, provincia, municipio, direccion, refCatastral, superficie, descripNotaSimple, inscripcionRegistro, cru, precio, finalizado, llaves, fechaAlta, comisionVen,comisionCom,observaciones,comercial,dormitorios,banos,exterior,operacion,cee,descripcion,ascensor) VALUES ('{tipologia}', '{provincia}', '{municipio}', '{direccion}', '{refCatastral}', '{superficie}', '{descripNotaSimple}', '{inscripcionRegistro}', '{cru}', '{precio}', '{finalizado}', '{llaves}', '{fechaAlta}', '{comisionVen}', '{comisionCom}', '{observaciones}', '{comercial}', '{dormitorios}', '{banos}', '{exterior}', '{operacion}', '{cee}', '{descripcion}', '{ascensor}');"
-            print('query insert', query)
-            cursor.execute(query)
-            connection.commit()
-            idNewInmueble = cursor.lastrowid
+    #         query = f"INSERT INTO avap.inmuebles (tipologia, provincia, municipio, direccion, refCatastral, superficie, descripNotaSimple, inscripcionRegistro, cru, precio, finalizado, llaves, fechaAlta, comisionVen,comisionCom,observaciones,comercial,dormitorios,banos,exterior,operacion,cee,descripcion,ascensor) VALUES ('{tipologia}', '{provincia}', '{municipio}', '{direccion}', '{refCatastral}', '{superficie}', '{descripNotaSimple}', '{inscripcionRegistro}', '{cru}', '{precio}', '{finalizado}', '{llaves}', '{fechaAlta}', '{comisionVen}', '{comisionCom}', '{observaciones}', '{comercial}', '{dormitorios}', '{banos}', '{exterior}', '{operacion}', '{cee}', '{descripcion}', '{ascensor}');"
+    #         print('query insert', query)
+    #         cursor.execute(query)
+    #         connection.commit()
+    #         idNewInmueble = cursor.lastrowid
 
-            msn = f'Se ha creado un inmueble con id {idNewInmueble}'
+    #         msn = f'Se ha creado un inmueble con id {idNewInmueble}'
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps({"status":"suscess","results":msn})
-                }
-            return response
+    #         response = {
+    #             "headers": {
+    #             'Access-Control-Allow-Origin': '*',
+    #             'Access-Control-Allow-Credentials': True
+    #             },
+    #             "statusCode": 200,
+    #             'body': json.dumps({"status":"suscess","results":msn})
+    #             }
+    #         return response
         
-    finally:
-        cursor.close()
-        connection.close()
+    # finally:
+    #     cursor.close()
+    #     connection.close()
     
 
 # Servicio para devolver inmueble por ID - GET
@@ -349,41 +299,44 @@ async def up_inmueble(id:str, inmueble:InmuebleModel):
 # @inmuebles.patch("/inmuebles{id}", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.patch("/inmuebles/{id}")
 async def finalizar_inmueble(id:str, inmuebleFin:InmuebleModel):
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    # inmuebleFin = dict(inmuebleFin)
+    dataBase.finalizar_inmueble(id, inmuebleFin)
 
-        with connection.cursor() as cursor:
-            print('evento PATCH')
-            print(id)
-            print(inmuebleFin)
-            inmuebleFin = dict(inmuebleFin)
-            estadoFin = inmuebleFin['finalizado']
+    # try:
+    #     connection = pymysql.connect(
+    #     host=os.environ.get("hostDB"),
+    #     user=os.environ.get("userDB"),
+    #     password=os.environ.get("passwordDB"),
+    #     database=os.environ.get("databaseDB"),
+    #     cursorclass=pymysql.cursors.DictCursor)
 
-            query = f"UPDATE avap.inmuebles SET finalizado = {estadoFin} WHERE id = {id};"
-            print('query insert', query)
-            cursor.execute(query)
-            connection.commit()
+    #     with connection.cursor() as cursor:
+    #         print('evento PATCH')
+    #         print(id)
+    #         print(inmuebleFin)
+    #         inmuebleFin = dict(inmuebleFin)
+    #         estadoFin = inmuebleFin['finalizado']
 
-            msn = f'Se ha cambiado el estado de finalizado el inmueble con id {id}'
+    #         query = f"UPDATE avap.inmuebles SET finalizado = {estadoFin} WHERE id = {id};"
+    #         print('query insert', query)
+    #         cursor.execute(query)
+    #         connection.commit()
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps({"status":"suscess","results":msn})
-                }
-            return response
+    #         msn = f'Se ha cambiado el estado de finalizado el inmueble con id {id}'
+
+    #         response = {
+    #             "headers": {
+    #             'Access-Control-Allow-Origin': '*',
+    #             'Access-Control-Allow-Credentials': True
+    #             },
+    #             "statusCode": 200,
+    #             'body': json.dumps({"status":"suscess","results":msn})
+    #             }
+    #         return response
         
-    finally:
-        cursor.close()
-        connection.close()
+    # finally:
+    #     cursor.close()
+    #     connection.close()
 
 
 # Servicio para asociar vendedor a inmueble - patch
