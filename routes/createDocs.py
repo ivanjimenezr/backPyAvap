@@ -141,7 +141,7 @@ async def docs_arras(id:int):
 
     # fnames = ftp.nlst()
 
-    ftp.cwd("httpdocs/files")
+    ftp.cwd("/files")
 
     localFilePath = 'arras.docx'
 
