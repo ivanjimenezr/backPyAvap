@@ -68,117 +68,100 @@ docs = APIRouter()
 
 @docs.get("/arras/{id}")
 async def docs_arras(id:int):
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    db = dataBase.get_inmueble_id(id)
+    #try:
+        #connection = pymysql.connect(
+        #host=os.environ.get("hostDB"),
+        #user=os.environ.get("userDB"),
+        #password=os.environ.get("passwordDB"),
+        #database=os.environ.get("databaseDB"),
+        #cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
+        #with connection.cursor() as cursor:
             
-            query = f"SELECT * FROM avap.inmuebles WHERE id = {id}"
-            cursor.execute(query)
-            db = cursor.fetchone()
-            print("Resultados de db: ", db)
-            tipologia = db['tipologia']
-            document = Document()
+            #query = f"SELECT * FROM avap.inmuebles WHERE id = {id}"
+            #cursor.execute(query)
+            #db = cursor.fetchone()
+            #print("Resultados de db: ", db)
+    tipologia = db['tipologia']
+    document = Document()
 
-            document.add_heading('Documento de Arras', 0)
+    document.add_heading('Documento de Arras', 0)
 
-            p = document.add_paragraph(f'A plain paragraph having some {tipologia}')
-            p.add_run('bold').bold = True
-            p.add_run(' and some ')
-            p.add_run('italic.').italic = True
+    p = document.add_paragraph(f'A plain paragraph having some {tipologia}')
+    p.add_run('bold').bold = True
+    p.add_run(' and some ')
+    p.add_run('italic.').italic = True
 
-            document.add_heading('Heading, level 1', level=1)
-            document.add_paragraph('Intense quote', style='Intense Quote')
+    document.add_heading('Heading, level 1', level=1)
+    document.add_paragraph('Intense quote', style='Intense Quote')
 
-            document.add_paragraph(
-                'first item in unordered list', style='List Bullet'
-            )
-            document.add_paragraph(
-                'first item in ordered list', style='List Number'
-            )
+    document.add_paragraph('first item in unordered list', style='List Bullet')
+    document.add_paragraph('first item in ordered list', style='List Number')
 
             # document.add_picture('monty-truth.png', width=Inches(1.25))
 
-            records = (
-                (3, '101', 'Spam'),
-                (7, '422', 'Eggs'),
-                (4, '631', 'Spam, spam, eggs, and spam')
-            )
+    records = (
+        (3, '101', 'Spam'),
+        (7, '422', 'Eggs'),
+        (4, '631', 'Spam, spam, eggs, and spam'))
 
-            table = document.add_table(rows=1, cols=3)
-            hdr_cells = table.rows[0].cells
-            hdr_cells[0].text = 'Qty'
-            hdr_cells[1].text = 'Id'
-            hdr_cells[2].text = 'Desc'
-            for qty, id, desc in records:
-                row_cells = table.add_row().cells
-                row_cells[0].text = str(qty)
-                row_cells[1].text = id
-                row_cells[2].text = desc
+    table = document.add_table(rows=1, cols=3)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'Qty'
+    hdr_cells[1].text = 'Id'
+    hdr_cells[2].text = 'Desc'
+    for qty, id, desc in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(qty)
+        row_cells[1].text = id
+        row_cells[2].text = desc
 
-            document.add_page_break()
+    document.add_page_break()
 
-            document.save('arras.docx')
-            # threFile = document.save('demo.docx')
+    #document.save('arras.docx')
+    # threFile = document.save('demo.docx')
 
-            bio = io.BytesIO()
-            document.save(bio)  # save to memory stream
-            bio.seek(0)  # rewind the stream
+    bio = io.BytesIO()
+    document.save(bio)  # save to memory stream
+    bio.seek(0)  # rewind the stream
             
 
             ### FTPPPPPPP --------------------------------------------
 
-            #domain name or server ip:
-            ftpHost = '217.160.32.229'
-            ftpPort = 21
-            ftpUname = 'avapagencia.com'
-            ftpPass = '_27Yvr3b'
+    # domain name or server ip:
+    ftpHost = '217.160.32.229'
+    ftpPort = 21
+    ftpUname = 'avapagencia.com'
+    ftpPass = '_27Yvr3b'
 
-            ftp = ftplib.FTP(timeout=30)
-            ftp.connect(ftpHost, ftpPort)
-            ftp.login(ftpUname, ftpPass)
+    ftp = ftplib.FTP(timeout=30)
+    ftp.connect(ftpHost, ftpPort)
+    ftp.login(ftpUname, ftpPass)
 
-            # fnames = ftp.nlst()
+    # fnames = ftp.nlst()
 
-            ftp.cwd("httpdocs/files")
+    ftp.cwd("httpdocs/files")
 
-            localFilePath = 'arras.docx'
+    localFilePath = 'arras.docx'
 
-            with open(localFilePath, 'rb') as file:
-                retCode =ftp.storbinary('STOR arras.docx', file, blocksize=1024*1024)
+    with open(localFilePath, 'rb') as file:
+        retCode =ftp.storbinary('STOR arras.docx', file, blocksize=1024*1024)
 
-            ftp.quit()
+        ftp.quit()
 
-            if retCode.startswith('256'):
-                print('upload success')
-            else:
-                print('upload not success...')
+        if retCode.startswith('256'):
+            print('upload success')
+        else:
+            print('upload not success...')
 
-            print('Ejwcucion completa')
+        print('Ejecucion completa')
 
             ### FTPPPPPPP --------------------------------------------
             
-            return f'https://pedantic-bardeen.217-160-32-229.plesk.page/files/{localFilePath}'
-            # return FileResponse(bio, media_type='application/octet-stream')
-            # return StreamingResponse(bio.read(), media_type='application/octet-stream')
+        return f'http://panel.acapagencia.com/files/{localFilePath}'
+        # return FileResponse(bio, media_type='application/octet-stream')
+        # return StreamingResponse(bio.read(), media_type='application/octet-stream')
 
-
-            # response = {
-            #     "headers": {
-            #     'Access-Control-Allow-Origin': '*',
-            #     'Access-Control-Allow-Credentials': True
-            #     },
-            #     "statusCode": 200,
-            #     'body': json.dumps(db)
-            #     }
-            # return document
-    finally:
-        cursor.close()
-        connection.close()
 
         
