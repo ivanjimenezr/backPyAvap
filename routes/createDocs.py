@@ -130,10 +130,10 @@ async def docs_arras(id:int):
             ### FTPPPPPPP --------------------------------------------
 
     # domain name or server ip:
-    ftpHost = '217.160.32.229'
+    ftpHost = os.environ.get("ftp_host")
     ftpPort = 21
-    ftpUname = 'avapagencia.com'
-    ftpPass = '_27Yvr3b'
+    ftpUname = os.environ.get("ftp_user")
+    ftpPass = os.environ.get("ftp_password")
 
     ftp = ftplib.FTP(timeout=30)
     ftp.connect(ftpHost, ftpPort)
