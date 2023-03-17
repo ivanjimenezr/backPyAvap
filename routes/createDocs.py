@@ -29,6 +29,8 @@ import json
 import io
 import ftplib
 
+import db.ConnToMysql as dataBase
+
 load_dotenv('.env') 
 
 
