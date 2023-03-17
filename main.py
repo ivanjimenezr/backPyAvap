@@ -23,6 +23,7 @@ import pymysql
 from dotenv import dotenv_values,load_dotenv
 import os
 import json
+import db.ConnToMysql as dataBase
 
 load_dotenv('.env') 
 
@@ -72,50 +73,9 @@ async def create_user(user: UserSchema = Body(...)):
     return signJWT(user.email)
 
 def check_user(data: UserLoginSchema):
-    print('user: ',data)
-    if data.email == data.email and data.password == data.password:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
-
-    with connection.cursor() as cursor:
-
-        try:
-            query = f"SELECT * FROM avap.usuarios where email = '{data.email}' and password = '{data.password}"
-            cursor = connection.cursor()
-            cursor.execute(query)
-            db = cursor.fetchone()
-            print("You're connected to database: ", db)
-
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            if db:
-                print('encontrado')
-                return True
-            else:
-                return False
-
-        except pymysql.Error as e:
-            print("Error while connecting to MySQL", e)
-        finally:
-            cursor.close()
-            connection.close()
-
-        # found =  db_usuarios.find_one({"email": data.email, "password":data.password})
-        # if found:
-        #     print('encontrado')
-        #     return True
-        # else:
-        #     return False
+    data = dict(data)
+    pd = dataBase.find_usuario(data)
+    return pd
 
 @app.post("/user/login", tags=["user"])
 async def user_login(user: UserLoginSchema = Body(...)):
@@ -124,93 +84,3 @@ async def user_login(user: UserLoginSchema = Body(...)):
     return {
         "error": "Wrong login details!"
     }
-
-@app.get("/test", tags=["user"])
-async def test():
-    connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
-
-    with connection.cursor() as cursor:
-
-        try:
-            query = "SELECT * FROM avap.inmuebles"
-            cursor = connection.cursor()
-            cursor.execute(query)
-            db = cursor.fetchall()
-            print("You're connected to database: ", db)
-            print(type(db))
-
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-
-        except pymysql.Error as e:
-            print("Error while connecting to MySQL", e)
-        finally:
-            cursor.close()
-            connection.close()
-            print("MySQL connection is closed")
-
-# for k, v in os.environ.items():
-#     print(f'{k}={v}')
-
-
-
-
-
-
-
-# @app.get("/inmuebles")
-# def read_root():
-#     return {"Hello": "World"}
-
-# # Serviciopara crear inmueble - POST
-# @app.post("/inmueble", status_code=201)
-# def create_inmueble(inmueble: Inmueble):
-#     u = db.put(inmueble.dict())
-#     return u
-
-# # Servicio para devolver inmueble por ID - GET
-# @app.get("/inmueble/{id}")
-# def get_inmueble(id):
-#     inmueble = db.get(id)
-#     if inmueble: # Si encuentra inmueble
-#         return inmueble
-#     else: # Si no lo encuentra
-#         return JSONResponse({"message":"Inmueble not found"}, status_code=404)
-
-# #Servicio para devolver todos los registros - GET
-# @app.get("/inmuebles/")
-# def get_inmuebles():
-#     inmueble = db.fetch()
-#     json_compatible_item_data = jsonable_encoder(inmueble)
-#     return  JSONResponse(content=json_compatible_item_data['_items'])
- 
-# # Servicio para UPDATE inmueble por ID - PATCH
-# @app.patch("/inmueble/{uid}")
-# def update_inmueble(uid: str, uu: InmuebleUpdate):
-#     updates = {k:v for k,v in uu.dict().items() if v is not None}
-#     try:
-#         db.update(updates,uid)
-#         return db.get(uid)
-#     except Exception:
-#         return JSONResponse({"message":"Inmueble not found"}, status_code=404)
-
-# # Servicio para borrar un inmueble por ID - DELETE
-# @app.delete("/inmueble/{id}")
-# def delete_inmueble(id:str):
-#     try:
-#         db.delete(id)
-#         return JSONResponse({"message":"Inmueble deleted"}, status_code=200)
-#     except Exception:
-#         return JSONResponse({"message":"Inmueble not found"}, status_code=404)
