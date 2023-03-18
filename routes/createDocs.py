@@ -85,9 +85,10 @@ async def docs_arras(id:int):
             #db = cursor.fetchone()
             #print("Resultados de db: ", db)
     tipologia = db['tipologia']
+    direccion = db['direccion']
     document = Document()
 
-    document.add_heading('Documento de Arras', 0)
+    document.add_heading(f'Documento de Arras para el inmueble de {direccion}', 0)
 
     p = document.add_paragraph(f'A plain paragraph having some {tipologia}')
     p.add_run('bold').bold = True
@@ -165,6 +166,16 @@ async def docs_arras(id:int):
         # return f'http://api.acapagencia.com/files/{localFilePath}' 
         # return FileResponse(bio, media_type='application/octet-stream')
         # return StreamingResponse(bio.read(), media_type='application/octet-stream')
-    # return
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps({'status':'susccess', 'results':f'Se ha generado el contrato de arras y puedes descargarlo <a href="http://panel.avapagencia.com/files/{localFilePath}">aquí</a>'})
+            }
+    return response
+    
+    # return f'http://panel.avapagencia.com/files/{localFilePath}'
 
         
