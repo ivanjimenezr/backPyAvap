@@ -69,6 +69,7 @@ docs = APIRouter()
 @docs.get("/arras/{id}")
 async def docs_arras(id:int):
     db = dataBase.get_inmueble_id(id)
+    print('db',db)
     #try:
         #connection = pymysql.connect(
         #host=os.environ.get("hostDB"),
@@ -119,7 +120,7 @@ async def docs_arras(id:int):
 
     document.add_page_break()
 
-    #document.save('arras.docx')
+    document.save('arras.docx')
     # threFile = document.save('demo.docx')
 
     bio = io.BytesIO()
@@ -140,12 +141,14 @@ async def docs_arras(id:int):
     ftp.login(ftpUname, ftpPass)
 
     # fnames = ftp.nlst()
-
-    ftp.cwd("/files")
+    print('aaaaaaaaaaaaaaaaaaaaaa')
+    ftp.cwd("/var/www/html/frontPyAvap/files")
+    print('bbbbbbbbbbbbbbbbbbbb')
 
     localFilePath = 'arras.docx'
 
     with open(localFilePath, 'rb') as file:
+        print('ffff',file)
         retCode =ftp.storbinary('STOR arras.docx', file, blocksize=1024*1024)
 
         ftp.quit()
@@ -153,15 +156,15 @@ async def docs_arras(id:int):
         if retCode.startswith('256'):
             print('upload success')
         else:
-            print('upload not success...')
+            print('upload not success...') 
 
         print('Ejecucion completa')
 
             ### FTPPPPPPP --------------------------------------------
             
-        return f'http://panel.acapagencia.com/files/{localFilePath}'
+        # return f'http://api.acapagencia.com/files/{localFilePath}' 
         # return FileResponse(bio, media_type='application/octet-stream')
         # return StreamingResponse(bio.read(), media_type='application/octet-stream')
-
+    # return
 
         
