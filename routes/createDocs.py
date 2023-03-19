@@ -30,6 +30,7 @@ import os
 import json
 import io
 import ftplib
+import datetime
 
 import db.ConnToMysql as dataBase
 
@@ -64,7 +65,7 @@ docs = APIRouter()
 
 # app = FastAPI()
 
-
+year = datetime.date.today().year
 
 
 
@@ -100,11 +101,18 @@ async def docs_arras(id:int):
     inscripcionRegistro = db['inscripcionRegistro']
     cru = db['cru']
     precio = db['precio']
+    condiPrestamo = db['condiPrestamo']
     
     
     document = Document()
 
     document.add_heading(f'CONTRATO DE ARRAS PENITENCIALES', 0).center=True
+    
+    fecha = document.add_paragraph()
+    fecha_format = fecha.paragraph_format
+    fecha_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    fecha.add_run(f'En _________, a __ de ________ de 202__')
+    
     g=document.add_paragraph()
     g_format = g.paragraph_format
     g_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -145,6 +153,9 @@ async def docs_arras(id:int):
         direccionV = vendedor['direccion']
         municipioV = vendedor['municipio']
         provinciaV = vendedor['provincia']
+
+        
+
         
         c = document.add_paragraph('D/Dª ')
         c_format = c.paragraph_format
@@ -190,7 +201,7 @@ async def docs_arras(id:int):
     k_format = k.paragraph_format
     k_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     k.add_run(f'II.- ').bold = True
-    k.add_run(f'Que la parte VENDEDORA está interesada en vender y la parte COMPRADORA está interesada en comprar con carácter privativo, en el estado actual y en las condiciones en que se halla el inmueble reseñado en la manifestación I. Declara la parte compradora que conoce el estado del inmueble y sus anejos inseparables si los tuviese y lo acepta en su estado actual como cuerpo cierto. La vivienda se entrega con los bienes descritos en la Estipulación Sexta de este contrato.')
+    k.add_run(f'Que la parte VENDEDORA está interesada en vender y la parte COMPRADORA está interesada en comprar con carácter privativo, en el estado actual y en las condiciones en que se halla el inmueble reseñado en la manifestación I. Declara la parte compradora que conoce el estado del inmueble y sus anejos inseparables si los tuviese y lo acepta en su estado actual como cuerpo cierto.')
 
     l = document.add_paragraph('Con base a lo anterior, deciden formalizar un CONTRATO DE ARRAS y con el fin de regularlo pactan las siguientes;')
     l_format = l.paragraph_format
@@ -266,23 +277,93 @@ async def docs_arras(id:int):
     # font.name ='Times New Roman'
     # font.size = Pt(9)
     # font.color.rgb = RGBColor(247, 6, 6)
-    document.add_page_break()
+    # document.add_page_break()
     w_format = w.paragraph_format
     w_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     w.add_run(f'Dado el carácter penitencial de estas arras y de acuerdo con lo establecido en el artículo 1.454 del Código Civil, si llegada la fecha máxima para formalizar la escritura de la compraventa la parte COMPRADORA hubiera incumplido lo convenido en el presente contrato, perderá la cantidad de ____________ EUROS (_____,__ €) entregados a cuenta, y no tendrán ningún derecho de compra sobre el inmueble objeto del presente documento. ')
-    w.add_run(f'Excepto en el caso que a la parte COMPRADORA no le fuera concedido el préstamo hipotecario; en este caso la parte VENDEDORA devolverá el valor de arras íntegro a la parte COMPRADORA.')
+    if condiPrestamo:
+        w.add_run(f'Excepto en el caso que a la parte COMPRADORA no le fuera concedido el préstamo hipotecario; en este caso la parte VENDEDORA devolverá el valor de arras íntegro a la parte COMPRADORA.')
 
-    x = document.add_paragraph()
-    x.style = document.styles.add_style('Style name', WD_STYLE_TYPE.PARAGRAPH)
-    font = x.style.font
-    # font.name ='Times Nex Roman'
-    # font.size = Pt(9)
-    font.color.rgb = RGBColor(247, 6, 6)
-    
-    x_format = x.paragraph_format
-    x_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    x.add_run(f'No obstante a lo anterior, dicha excepción (esto es, el derecho al reintegro de las cantidad entregada como señal sin penalización) sólo operará en el caso de que la parte COMPRADORA acredite que la imposibilidad de obtener la financiación necesaria se debe a causas totalmente ajenas a su voluntad. A tal efecto, la parte COMPRADORA deberá aportar a Esther Castilla Torres (la AGENCIA) la documentación justificativa de dicho extremo')
+        x = document.add_paragraph()
+        x_format = x.paragraph_format
+        x_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        
+        x.add_run(f'No obstante a lo anterior, dicha excepción (esto es, el derecho al reintegro de las cantidad entregada como señal sin penalización) sólo operará en el caso de que la parte COMPRADORA acredite que la imposibilidad de obtener la financiación necesaria se debe a causas totalmente ajenas a su voluntad. A tal efecto, la parte COMPRADORA deberá aportar a AVAP Agencia de la Vivienda SL (la AGENCIA) la documentación justificativa de dicho extremo.')
 
+    y = document.add_paragraph()
+    y_format = y.paragraph_format
+    y_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    y.add_run(f'Para el caso de que el préstamo esté aprobado y la operación se pueda firmar en un plazo máximo de diez días después del vencimiento del presente contrato, siempre que sólo sea un problema de fecha de firma en Notaría, las partes podrán pactar la ampliación del presente contrato señalando el día de firma en Notaría con posterioridad al vencimiento del presente documento.')
+
+    z = document.add_paragraph()
+    z_format = z.paragraph_format
+    z_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    z.add_run(f'Si fuera la parte VENDEDORA quien incumpliera lo convenido en el presente contrato, deberá abonar a la parte COMPRADORA el doble de la cantidad recibida en concepto de arras o señal, es decir, la suma total de ____________ EUROS (_____,__ €)')
+
+    za = document.add_paragraph()
+    za_format = za.paragraph_format
+    za_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    za.add_run(f'QUINTA.- La finca indicada en las manifestaciones I, se transmitirá libre de cargas y gravámenes, arrendamientos y ocupantes y al corriente de pago de la comunidad de propietarios e impuestos (a la escritura se aportarán los certificados correspondientes).').bold = True
+
+    zb = document.add_paragraph()
+    zb_format = zb.paragraph_format
+    zb_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    zb.add_run(f'Todos los gastos e impuestos y derechos de este contrato, y de la escritura pública de compraventa que en su día se otorgue (dentro del plazo fijado en la estipulación cuarta), serán de cuenta de la parte COMPRADORA, excepto el pago del Impuesto sobre el Incremento del Valor de los Terrenos de Naturaleza Urbana (plusvalía municipal) que corresponderá a la parte VENDEDORA.')
+
+    zc = document.add_paragraph()
+    zc_format = zc.paragraph_format
+    zc_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    zc.add_run(f'Las partes pactan que se prorrateará el total del IBI de este año {year} perteneciente los gastos anteriores a la firma a la parte VENDEDORA y en el momento de la firma en adelante será por cuenta de la parte COMPRADORA.')
+
+    zd = document.add_paragraph()
+    zd_format = zd.paragraph_format
+    zd_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    zd.add_run(f'SÉPTIMA.- ').bold = True
+    zd.add_run(f'Las partes se comprometen en todo momento a cumplir el presente contrato y a ejercitar los derechos y cumplir las obligaciones que se desprenden del mismo, conforme a las más estrictas exigencias de la buena fe.')
+
+    ze = document.add_paragraph()
+    ze_format = ze.paragraph_format
+    ze_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    ze.add_run(f'OCTAVA.- ').bold = True
+    ze.add_run(f'A efectos de notificaciones y requerimientos, las partes señalan como domicilios los designados al principio de este contrato como propios de los intervinientes.')
+
+    zf = document.add_paragraph()
+    zf_format = zf.paragraph_format
+    zf_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    zf.add_run(f'NOVENA.- ').bold = True
+    zf.add_run(f'Para cualquiera incidencia o conflicto derivado del presente contrato, de su cumplimiento, ejecución o rescisión, las partes con expresa renuncia de su fuero propio, se someten a los Juzgados y Tribunales de _____________________.')
+
+    document.add_page_break()
+
+    zg = document.add_paragraph()
+    zg_format = zg.paragraph_format
+    zg_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    zg.add_run(f'Y para que así conste, una vez leído, firman este contrato por duplicado y a un solo efecto, en el lugar y fecha indicados en el encabezamiento')
+
+    numVende = len(vendedores)
+    datos = []
+    for vendedor in vendedores:
+        nameV = vendedor['nombre']
+        dniV = vendedor['dni']
+        vende = nameV, dniV
+        print('vende',)
+        datos.append(vende)
+    print('ooooooooo', datos)
+    datos = tuple(datos)
+    print('aaaaaaa', datos)
+
+    records = datos
+
+    table = document.add_table(rows=numVende-1, cols=2)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'PARTE VENDEDORA'
+    hdr_cells[1].text = 'PARTE COMPRADORA'
+    for qty, id in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(qty)
+        row_cells = table.add_row().cells
+        row_cells[1].text = id
+        # row_cells[2].text = desc
         # p.add_run('italic.').italic = True
 
         # p = document.add_paragraph(f'D/Dª {nameV}').bold = True
@@ -338,9 +419,7 @@ async def docs_arras(id:int):
     ftp.login(ftpUname, ftpPass)
 
     # fnames = ftp.nlst()
-    print('aaaaaaaaaaaaaaaaaaaaaa')
     ftp.cwd("/var/www/html/frontPyAvap/files")
-    print('bbbbbbbbbbbbbbbbbbbb')
 
     localFilePath = 'arras.docx'
 
