@@ -398,7 +398,7 @@ async def docs_arras(id:int):
 
     document.add_page_break()
 
-    document.save('/files/arras.docx')
+    document.save('files/arras.docx')
     # threFile = document.save('demo.docx')
 
     bio = io.BytesIO()
