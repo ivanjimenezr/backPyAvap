@@ -1,12 +1,13 @@
-from fastapi import APIRouter,status, Response,BackgroundTasks, Depends
-from fastapi.responses import FileResponse
-from db.client import db_inmuebles, db_asociaciones
+# from fastapi import APIRouter,status, Response,BackgroundTasks, Depends
+from fastapi import APIRouter
+# from fastapi.responses import FileResponse
+# from db.client import db_inmuebles, db_asociaciones
 from schemas.inmuebles import inmuebleEntity, inmueblesEntity
 from schemas.asociaciones import asociacionEntity,asociacionesEntity
 from models.inmuebles import InmuebleModel
 from models.asociaciones import AsociacioneModels
-from bson import ObjectId
-from fastapi.middleware.cors import CORSMiddleware
+# from bson import ObjectId
+# from fastapi.middleware.cors import CORSMiddleware
 
 import db.ConnToMysql as dataBase
 # from starlette.responses import FileResponse
