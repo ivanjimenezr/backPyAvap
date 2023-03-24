@@ -27,6 +27,8 @@ class InmuebleModel(BaseModel):
     cee: Optional[str]
     descripcion: Optional[str]
     ascensor: Optional[str]
+    condiPrestamo: Optional[bool]
+    importeArras: Optional[str]
 
     # vendedores: Optional[list]
 
