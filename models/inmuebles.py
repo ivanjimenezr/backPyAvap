@@ -29,8 +29,8 @@ class InmuebleModel(BaseModel):
     ascensor: Optional[str]
     condiPrestamo: Optional[bool]
     importeArras: Optional[str]
-
-    # vendedores: Optional[list]
+    vendedores: Optional[list]
+    compradores: Optional[list]
 
 
 # class InmuebleUpdate(BaseModel): # Clase para el update

@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from schemas.inmuebles import inmuebleEntity, inmueblesEntity
 from schemas.asociaciones import asociacionEntity,asociacionesEntity
 from models.inmuebles import InmuebleModel
-from models.asociaciones import AsociacioneModels
+from models.asociaciones import AsociacioneModels, AsociacioneCompraModels
 # from bson import ObjectId
 # from fastapi.middleware.cors import CORSMiddleware
 
@@ -79,6 +79,7 @@ async def list_inmuebles():
     
     allInmuebles = []
     for nn in allInmu:
+        print('nn',nn)
         idInmueble = nn['id']
        
         dbVendedores = dataBase.get_vendedor_id_inmuebles(idInmueble)
@@ -87,6 +88,14 @@ async def list_inmuebles():
         else:
             nn['vendedores'] = []
         allInmuebles.append(nn)
+
+        dbCompradores = dataBase.get_comprador_id_inmuebles(idInmueble)
+        
+        if dbCompradores:
+            nn['compradores'] = dbCompradores
+        else:
+            nn['compradores'] = []
+        allInmuebles.append(nn)
         
         response = {
             "headers": {
@@ -94,9 +103,9 @@ async def list_inmuebles():
             'Access-Control-Allow-Credentials': True
             },
             "statusCode": 200,
-            'body': json.dumps(allInmu)
+            'body': json.dumps(allInmuebles)
             }
-        return allInmu
+    return allInmu
     # finally:
     #     cursor.close()
     #     connection.close()
@@ -117,6 +126,12 @@ async def list_inmuebles(id:int):
         db['vendedores'] = dbVendedores
     else:
         db['vendedores'] = []
+    
+    dbCompradores = dataBase.get_comprador_id_inmuebles(id)
+    if dbCompradores:
+        db['compradores'] = dbCompradores
+    else:
+        db['compradores'] = []
     
     response = {
         "headers": {
@@ -347,53 +362,29 @@ async def createAsociaVendedor(id,asociaVendedor:AsociacioneModels):
     asociaVendedor_dic = dict(asociaVendedor)
     hh = asociaVendedor_dic['idVendedor']
 
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+    for vendedor in hh:
+        print(vendedor['id'])
+        # Preguntamos por si la asociacion ya existe
+        dataBase.createAsociaVendedor(id, vendedor)
 
-        with connection.cursor() as cursor:
-            for vendedor in hh:
-                print(vendedor['id'])
-                # Preguntamos por si la asociacion ya existe
-                query = f"SELECT * FROM avap.asociaciones where idInmueble = {id} and idVendedor = {vendedor['id']}"
-                cursor.execute(query)
-                found = cursor.fetchone()
-                # found = db_asociaciones.find_one({"idInmueble":id,"idVendedor":vendedor['id']})
-                if not found:
-                    print('no existe asocio')
-                    query = f"INSERT INTO avap.asociaciones (idInmueble, idVendedor) VALUES ({id}, {vendedor['id']});"
-                    print('query insert', query)
-                    cursor.execute(query)
-                    connection.commit()
-                    # db_asociaciones.insert_one({"idInmueble":id,"idVendedor":vendedor['id']})
-                    msn = 'No esta asociado, creo la asociación'
-                else:
-                    print('Ya existe la asociacion')
-                    print(found)
-                    msn = 'Ya existe la asociacion'
-            return  msn
-            
-            
+# Servicio para asociar comprador a inmueble
+# @inmuebles.post("/inmuebles{id}", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
+@inmuebles.post("/asociaComprador/{id}")
+async def createAsociaComprador(id,asociaComprador:AsociacioneCompraModels):
+    asociaComprador_dic = dict(asociaComprador)
+    print('asociaComprador_dic: ',asociaComprador_dic)
+    hh = asociaComprador_dic['idComprador']
 
-            msn = f'Se ha actualizado el inmueble con id {id}'
-
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps({"status":"suscess","results":msn})
-                }
-            return response
+    for comprador in hh:
+        print(comprador['id'])
+        # Preguntamos por si la asociacion ya existe
+        dataBase.createAsociaComprador(id, comprador)
         
-    finally:
-        cursor.close()
-        connection.close()
+        
+            
+            
+
+            
 
     
 

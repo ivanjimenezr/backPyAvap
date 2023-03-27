@@ -73,10 +73,16 @@ year = datetime.date.today().year
 async def docs_arras(id:int):
     db = dataBase.get_inmueble_id(id)
     dbVendedores = dataBase.get_vendedor_id_inmuebles(id)
+    dbCompradores = dataBase.get_comprador_id_inmuebles(id)
     if dbVendedores:
         db['vendedores'] = dbVendedores
     else:
         db['vendedores'] = []
+    
+    if dbCompradores:
+        db['compradores'] = dbCompradores
+    else:
+        db['compradores'] = []
     
     print('db',db)
     #try:
@@ -96,6 +102,7 @@ async def docs_arras(id:int):
     tipologia = db['tipologia']
     direccion = db['direccion']
     vendedores = db['vendedores']
+    compradores = db['compradores']
     refCatastral = db['refCatastral']
     superficie = db['superficie']
     inscripcionRegistro = db['inscripcionRegistro']
@@ -146,13 +153,13 @@ async def docs_arras(id:int):
     b.add_run(f'VENDEDORA.').bold = True
     d = document.add_paragraph()
     d.add_run(f'Y, de otra parte,').bold = True
-    for vendedor in vendedores:
-        nameV = vendedor['nombre']
-        estadoCivilV = vendedor['estadoCivil']
-        dniV = vendedor['dni']
-        direccionV = vendedor['direccion']
-        municipioV = vendedor['municipio']
-        provinciaV = vendedor['provincia']
+    for comprador in compradores:
+        nameC = comprador['nombre']
+        estadoCivilC = comprador['estadoCivil']
+        dniC = comprador['dni']
+        direccionC = comprador['direccion']
+        municipioC = comprador['municipio']
+        provinciaC = comprador['provincia']
 
         
 
@@ -160,16 +167,16 @@ async def docs_arras(id:int):
         c = document.add_paragraph('D/Dª ')
         c_format = c.paragraph_format
         c_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        c.add_run(f'{nameV}, ').bold = True
+        c.add_run(f'{nameC}, ').bold = True
         c.add_run('mayor de edad, estado civil ')
-        c.add_run(f'{estadoCivilV}, ')
+        c.add_run(f'{estadoCivilC}, ')
         c.add_run(f'con DNI/NIE ')
-        c.add_run(f'{dniV}, ')
+        c.add_run(f'{dniC}, ')
         c.add_run(f'con dirección en ')
-        c.add_run(f'{direccionV}, ')
+        c.add_run(f'{direccionC}, ')
         c.add_run(f'de ')
-        c.add_run(f'{municipioV} ')
-        c.add_run(f'({provinciaV})')
+        c.add_run(f'{municipioC} ')
+        c.add_run(f'({provinciaC})')
     
     f=document.add_paragraph('Quienes actúan como parte ')
     f.add_run(f'COMPRADORA.').bold = True
@@ -354,15 +361,21 @@ async def docs_arras(id:int):
 
     records = datos
 
-    table = document.add_table(rows=numVende-1, cols=2)
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'PARTE VENDEDORA'
-    hdr_cells[1].text = 'PARTE COMPRADORA'
-    for qty, id in records:
-        row_cells = table.add_row().cells
-        row_cells[0].text = str(qty)
-        row_cells = table.add_row().cells
-        row_cells[1].text = id
+    # table = document.add_table(rows=numVende-1, cols=2)
+    # hdr_cells = table.rows[0].cells
+    # hdr_cells[0].text = 'PARTE VENDEDORA'
+    # hdr_cells[1].text = 'PARTE COMPRADORA'
+    # for qty, id in records:
+    #     row_cells = table.add_row().cells
+    #     row_cells[0].text = str(qty)
+    #     row_cells = table.add_row().cells
+    #     row_cells[1].text = id
+
+
+
+
+
+
         # row_cells[2].text = desc
         # p.add_run('italic.').italic = True
 
@@ -419,7 +432,7 @@ async def docs_arras(id:int):
     ftp.login(ftpUname, ftpPass)
 
     # fnames = ftp.nlst()
-    ftp.cwd("/var/www/html/frontPyAvap/files")
+    ftp.cwd("/var/www/html/backPyAvap/files")
 
     localFilePath = 'arras.docx'
 

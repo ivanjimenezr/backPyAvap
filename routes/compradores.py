@@ -10,6 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 
+import db.ConnToMysql as dataBase
+import json
+
 
 
 # from fastapi.encoders import jsonable_encoder
@@ -48,9 +51,20 @@ compradores = APIRouter()
 #     return {"Hello": "World2"}
 
 #Servicio para devolver todos los registros - GET
-@compradores.get("/compradores", dependencies=[Depends(JWTBearer())], tags=["compradores"])
+# @compradores.get("/compradores", dependencies=[Depends(JWTBearer())], tags=["compradores"])
+@compradores.get("/compradores")
 async def list_compradores():
-    return  compradoresEntity(db_compradores.find())
+    allCompra = dataBase.get_all_compradores()
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(allCompra)
+            }
+    return allCompra
+    # return  compradoresEntity(db_compradores.find())
 
 
 # Serviciopara crear compradores - POST
