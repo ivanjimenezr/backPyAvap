@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Body,Depends
 from routes.inmuebles import inmuebles
-from routes.vendedores import vendedores
+# from routes.vendedores import vendedores
 from routes.compradores import compradores
 from routes.comerciales import comerciales
 from routes.login import usuarios
