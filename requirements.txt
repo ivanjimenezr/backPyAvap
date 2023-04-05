@@ -10,3 +10,4 @@ mysql.connector
 python-docx
 pyftpdlib
 pydantic[email]
+num2words

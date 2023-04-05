@@ -9,26 +9,7 @@ from docx.enum.style import WD_STYLE_TYPE
 import random
 import string
 
-# from db.client import db_inmuebles, db_asociaciones
-# from schemas.inmuebles import inmuebleEntity, inmueblesEntity
-# from schemas.asociaciones import asociacionEntity,asociacionesEntity
-# from models.inmuebles import InmuebleModel
-# from models.asociaciones import AsociacioneModels
-from bson import ObjectId
-from fastapi.middleware.cors import CORSMiddleware
-# from starlette.responses import FileResponse,StreamingResponse
 
-# from reportlab.pdfgen import canvas
-# from reportlab.lib.pagesizes import letter, A4
-
-# from reportlab.lib.styles import ParagraphStyle
-# from reportlab.lib.styles import getSampleStyleSheet
-
-from auth.auth_handler import signJWT
-from auth.auth_bearer import JWTBearer
-
-import pymysql.cursors
-from dotenv import dotenv_values,load_dotenv
 import os   
 import json
 import io
@@ -36,6 +17,9 @@ import ftplib
 import datetime
 
 import db.ConnToMysql as dataBase
+
+
+from num2words import num2words
 
 # load_dotenv('.env') 
 
@@ -114,8 +98,14 @@ async def docs_arras(id:int):
     inscripcionRegistro = db['inscripcionRegistro']
     cru = db['cru']
     precio = db['precio']
+    precioLetras = num2words(precio, lang ='es').upper()
     condiPrestamo = db['condiPrestamo']
-    
+    importeArras = db['importeArras']
+
+    restante = int(precio) - int(importeArras)
+    restanteLetras = num2words(restante, lang ='es').upper()
+
+    importeArrasLetras = num2words(importeArras, lang ='es').upper()
     
     document = Document()
 
@@ -229,8 +219,10 @@ async def docs_arras(id:int):
     n_format = n.paragraph_format
     n_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     n.add_run(f'PRIMERA.- ').bold = True
+
+    
     n.add_run(f'El precio de la compraventa se fija en ')
-    n.add_run(f'XXXXXXXX EUROS ({precio} €) ').bold = True
+    n.add_run(f'{precioLetras} EUROS ({precio} €) ').bold = True
     n.add_run(f'más los impuestos y gastos que correspondan.')
 
     o = document.add_paragraph()
@@ -244,7 +236,7 @@ async def docs_arras(id:int):
     p_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p.add_run(f'A.- ').bold = True
     p.add_run(f'Un primer pago que realiza la parte COMPRADORA por la cantidad de ')
-    p.add_run(f' ______ EUROS (00.000,00 €) ').bold = True
+    p.add_run(f'{importeArrasLetras} EUROS ({importeArras:,.2f} €) ').bold = True
     p.add_run(f'realizado mediante transferencia bancaria de fecha _______ a la cuenta número: ES____ de __. Perteneciente a la parte VENDEDORA, y cuyo justificante se aporta al presente contrato de arras.')
 
     q = document.add_paragraph()
@@ -252,7 +244,7 @@ async def docs_arras(id:int):
     q_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     q.add_run(f'B.- ').bold = True
     q.add_run(f'Si en el transcurso de los próximos tres días la parte VENDEDORA no hubiera recibido en su cuenta la transferencia de ')
-    q.add_run(f' ______ EUROS (00.000,00 €) ').bold = True
+    q.add_run(f' {importeArrasLetras} EUROS ({importeArras} €) ').bold = True
     q.add_run(f' indicado en la estipulación A, el presente contrato de Arras quedará nulo y sin efecto alguno.')
 
     r = document.add_paragraph()
@@ -265,7 +257,10 @@ async def docs_arras(id:int):
     s_format = s.paragraph_format
     s_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     s.add_run(f'D.- ').bold = True
-    s.add_run(f'La cantidad restante que asciende a _____________ MIL EUROS (________,__ €) más los impuestos y gastos que correspondan, se abonará en el momento en el que se formalice la escritura de compraventa ante notario.')
+    s.add_run(f'La cantidad restante que asciende a ')
+    s.add_run(f'{restanteLetras} EUROS ({restante} €) ').bold = True
+    s.add_run(f'más los impuestos y gastos que correspondan, se abonará en el momento en el que se formalice la escritura de compraventa ante notario.')
+
 
     t = document.add_paragraph()
     t_format = t.paragraph_format
@@ -368,8 +363,8 @@ async def docs_arras(id:int):
 
     datosC = []
     for comprador in compradores:
-        nameC = vendedor['nombre']
-        dniC = vendedor['dni']
+        nameC = comprador['nombre']
+        dniC = comprador['dni']
         compra = nameC, dniC
         print('compra',)
         datosC.append(compra)
@@ -379,41 +374,102 @@ async def docs_arras(id:int):
 
     recordsC = datosC
 
-    table = document.add_table(rows=numVende-1, cols=2)
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'PARTE VENDEDORA'
-    hdr_cells[1].text = 'PARTE COMPRADORA'
+    # table = document.add_table(rows=numVende-1, cols=2)
+    # hdr_cells = table.rows[0].cells
+    # hdr_cells[0].text = 'PARTE VENDEDORA'
+    # hdr_cells[1].text = 'PARTE COMPRADORA'
     # for qty, id in records:
     #     row_cells = table.add_row().cells
     #     row_cells[0].text = str(qty)
     #     row_cells = table.add_row().cells
     #     row_cells[1].text = id
 
-    tableV = document.add_table(rows=1, cols=1)
-    hdr_cells = tableV.rows[0].cells
-    hdr_cells[0].text = 'PARTE VENDEDORA'
-    for qty, id in recordsV:
-        row_cells = tableV.add_row().cells
-        row_cells[0].text = str(qty)
-        row_cells = tableV.add_row().cells
-        row_cells[0].text = f'DNI: {id}'
-        row_cells = tableV.add_row().cells
-        row_cells[0].text = 'Firma:'
-        row_cells = tableV.add_row().cells
-        row_cells[0].text = ''
 
-    tableC = document.add_table(rows=1, cols=1)
+
+    # tableV = document.add_table(rows=1, cols=2)
+    # hdr_cells = tableV.rows[0].cells
+    # hdr_cells[0].text = 'PARTE VENDEDORA'
+    # hdr_cells[1].text = 'PARTE COMPRADORA'
+    # for qty, id in recordsV:
+    #     row_cells = tableV.add_row().cells
+    #     row_cells[0].text = str(qty)
+    #     row_cells = tableV.add_row().cells
+    #     row_cells[0].text = f'DNI: {id}'
+    #     row_cells = tableV.add_row().cells
+    #     row_cells[0].text = 'Firma:'
+    #     row_cells = tableV.add_row().cells
+    #     row_cells[0].text = ''
+    
+    # for qty2, id2 in recordsC:
+    #     # row_cells = tableV.add_row().cells
+    #     row_cells[1].text = str(qty2)
+    #     # row_cells = tableV.add_row().cells
+    #     row_cells[1].text = f'DNI2: {id2}'
+    #     # row_cells = tableV.add_row().cells
+    #     row_cells[1].text = 'Firma2:'
+    #     # row_cells = tableV.add_row().cells
+    #     row_cells[1].text = ''
+
+    
+    marks = {"English" : 78, "Physics" : 98, "Chemistry" : 78} 
+    
+    
+    tableC = document.add_table(rows=1, cols=2)
     hdr_cells = tableC.rows[0].cells
-    hdr_cells[0].text = 'PARTE COMPRADORA'
-    for qty, id in recordsC:
-        row_cells = tableC.add_row().cells
-        row_cells[0].text = str(qty)
-        row_cells = tableC.add_row().cells
-        row_cells[0].text = f'DNI: {id}'
-        row_cells = tableC.add_row().cells
-        row_cells[0].text = 'Firma:'
-        row_cells = tableC.add_row().cells
-        row_cells[0].text = ''
+    hdr_cells[0].text = 'PARTE VENDEDORA'
+    hdr_cells[1].text = 'PARTE COMPRADORA'
+    row_cells = tableC.add_row().cells
+
+    lenVendedores = len(recordsV)*5
+    lenCompradores = len(recordsC)*5
+    print('Longitud de C: ', lenCompradores)
+    marks_tableV = row_cells[0].add_table(rows=lenVendedores, cols=1)
+    marks_tableC = row_cells[1].add_table(rows=lenCompradores, cols=1)
+    
+    # for i, row in enumerate(recordsC.items()): # iterate over 3 values
+    
+    i = 0
+    for vendedor in recordsV:
+        print('vendedor: ', vendedor)
+        # for i, row in enumerate(marks.items()): # iterate over 3 values
+        marks_tableV.rows[i].cells[0].text = vendedor[0] # sub table first cell
+        i += 1
+        marks_tableV.rows[i].cells[0].text = f'DNI: {vendedor[1]}' # second cell
+        i += 1
+        marks_tableV.rows[i].cells[0].text = 'Firma:' # second cell
+        i += 1
+        marks_tableV.rows[i].cells[0].text = '' # second cell
+        i += 1
+        marks_tableV.rows[i].cells[0].text = '' # second cell
+        i += 1
+    
+    i = 0
+    for comprador in recordsC:
+        print('comprador: ', comprador)
+        # for i, row in enumerate(marks.items()): # iterate over 3 values
+        marks_tableC.rows[i].cells[0].text = comprador[0] # sub table first cell
+        i += 1
+        marks_tableC.rows[i].cells[0].text = f'DNI: {comprador[1]}' # second cell
+        i += 1
+        marks_tableC.rows[i].cells[0].text = 'Firma:' # second cell
+        i += 1
+        marks_tableC.rows[i].cells[0].text = '' # second cell
+        i += 1
+        marks_tableC.rows[i].cells[0].text = '' # second cell
+        i += 1
+    
+    # row_cells[0].text = str(qty)
+    
+    
+    # for qty, id in recordsC:
+    #     row_cells = tableC.add_row().cells
+    #     row_cells[0].text = str(qty)
+    #     row_cells = tableC.add_row().cells
+    #     row_cells[0].text = f'DNI: {id}'
+    #     row_cells = tableC.add_row().cells
+    #     row_cells[0].text = 'Firma:'
+    #     row_cells = tableC.add_row().cells
+    #     row_cells[0].text = ''
     # records = (
     # (3, '101', 'Spam'),
     # (7, '422', 'Eggs'),
