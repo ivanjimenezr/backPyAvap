@@ -354,41 +354,65 @@ async def docs_arras(id:int):
     zg.add_run(f'Y para que así conste, una vez leído, firman este contrato por duplicado y a un solo efecto, en el lugar y fecha indicados en el encabezamiento.')
 
     numVende = len(vendedores)
-    datos = []
+    datosV = []
     for vendedor in vendedores:
         nameV = vendedor['nombre']
         dniV = vendedor['dni']
         vende = nameV, dniV
         print('vende',)
-        datos.append(vende)
-    print('ooooooooo', datos)
-    datos = tuple(datos)
-    print('aaaaaaa', datos)
+        datosV.append(vende)
+    print('ooooooooo', datosV)
+    datosV = tuple(datosV)
+    print('aaaaaaa', datosV)
+    recordsV = datosV
 
-    records = datos
+    datosC = []
+    for comprador in compradores:
+        nameC = vendedor['nombre']
+        dniC = vendedor['dni']
+        compra = nameC, dniC
+        print('compra',)
+        datosC.append(compra)
+    print('ooooooooo', datosC)
+    datosC = tuple(datosC)
+    print('aaaaaaa', datosC)
 
-    # table = document.add_table(rows=numVende-1, cols=2)
-    # hdr_cells = table.rows[0].cells
-    # hdr_cells[0].text = 'PARTE VENDEDORA'
-    # hdr_cells[1].text = 'PARTE COMPRADORA'
+    recordsC = datosC
+
+    table = document.add_table(rows=numVende-1, cols=2)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'PARTE VENDEDORA'
+    hdr_cells[1].text = 'PARTE COMPRADORA'
     # for qty, id in records:
     #     row_cells = table.add_row().cells
     #     row_cells[0].text = str(qty)
     #     row_cells = table.add_row().cells
     #     row_cells[1].text = id
 
-    table = document.add_table(rows=1, cols=2)
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'PARTE VENDEDORA'.bold = True
-    hdr_cells[1].text = 'PARTE COMPRADORA'.bold = True
-    for qty, id in records:
-        row_cells = table.add_row().cells
+    tableV = document.add_table(rows=1, cols=1)
+    hdr_cells = tableV.rows[0].cells
+    hdr_cells[0].text = 'PARTE VENDEDORA'
+    for qty, id in recordsV:
+        row_cells = tableV.add_row().cells
         row_cells[0].text = str(qty)
-        row_cells = table.add_row().cells
-        row_cells[0].text = id
-        row_cells = table.add_row().cells
+        row_cells = tableV.add_row().cells
+        row_cells[0].text = f'DNI: {id}'
+        row_cells = tableV.add_row().cells
         row_cells[0].text = 'Firma:'
-        row_cells = table.add_row().cells
+        row_cells = tableV.add_row().cells
+        row_cells[0].text = ''
+
+    tableC = document.add_table(rows=1, cols=1)
+    hdr_cells = tableC.rows[0].cells
+    hdr_cells[0].text = 'PARTE COMPRADORA'
+    for qty, id in recordsC:
+        row_cells = tableC.add_row().cells
+        row_cells[0].text = str(qty)
+        row_cells = tableC.add_row().cells
+        row_cells[0].text = f'DNI: {id}'
+        row_cells = tableC.add_row().cells
+        row_cells[0].text = 'Firma:'
+        row_cells = tableC.add_row().cells
         row_cells[0].text = ''
     # records = (
     # (3, '101', 'Spam'),
