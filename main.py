@@ -61,7 +61,7 @@ app.add_middleware(
 users = []
 
 app.include_router(inmuebles)
-app.include(vendedores)
+app.include_router(vendedores)
 app.include_router(compradores)
 app.include_router(comerciales)
 app.include_router(docs)
