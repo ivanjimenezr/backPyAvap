@@ -11,4 +11,5 @@ venv/
 ENV/ 
 env.bak/ 
 venv.bak/ 
-db/
+db/client.py
+db/tunnel.py

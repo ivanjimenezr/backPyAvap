@@ -17,15 +17,15 @@ from models.usuarios import PostSchema, UserSchema, UserLoginSchema
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 from bson import ObjectId
-from db.client import db_usuarios
+# from db.client import db_usuarios
 
-import pymysql
-from dotenv import dotenv_values,load_dotenv
-import os
-import json
-import db.ConnToMysql as dataBase
+# import pymysql
+# from dotenv import dotenv_values,load_dotenv
+# import os
+# import json
+# import db.ConnToMysql as dataBase
 
-load_dotenv('.env') 
+# load_dotenv('.env') 
 
 
 
@@ -67,20 +67,20 @@ app.include_router(comerciales)
 app.include_router(docs)
 # app.include_router(usuarios)
 
-@app.post("/user/signup", tags=["user"])
-async def create_user(user: UserSchema = Body(...)):
-    users.append(user) # replace with db call, making sure to hash the password first
-    return signJWT(user.email)
+# @app.post("/user/signup", tags=["user"])
+# async def create_user(user: UserSchema = Body(...)):
+#     users.append(user) # replace with db call, making sure to hash the password first
+#     return signJWT(user.email)
 
-def check_user(data: UserLoginSchema):
-    data = dict(data)
-    pd = dataBase.find_usuario(data)
-    return pd
+# def check_user(data: UserLoginSchema):
+#     data = dict(data)
+#     pd = dataBase.find_usuario(data)
+#     return pd
 
-@app.post("/user/login", tags=["user"])
-async def user_login(user: UserLoginSchema = Body(...)):
-    if check_user(user):
-        return signJWT(user.email)
-    return {
-        "error": "Wrong login details!"
-    }
+# @app.post("/user/login", tags=["user"])
+# async def user_login(user: UserLoginSchema = Body(...)):
+#     if check_user(user):
+#         return signJWT(user.email)
+#     return {
+#         "error": "Wrong login details!"
+#     }

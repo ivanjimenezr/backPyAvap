@@ -6,6 +6,9 @@ from docx.shared import Inches,Pt,RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.style import WD_STYLE_TYPE
 
+import random
+import string
+
 # from db.client import db_inmuebles, db_asociaciones
 # from schemas.inmuebles import inmuebleEntity, inmueblesEntity
 # from schemas.asociaciones import asociacionEntity,asociacionesEntity
@@ -34,8 +37,11 @@ import datetime
 
 import db.ConnToMysql as dataBase
 
-load_dotenv('.env') 
+# load_dotenv('.env') 
 
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+nameAleatorio = id_generator()
 
 # from fastapi.encoders import jsonable_encoder
 # from fastapi.responses import JSONResponse
@@ -411,7 +417,7 @@ async def docs_arras(id:int):
 
     document.add_page_break()
 
-    document.save('files/arras.docx')
+    document.save(f'files/arras_{nameAleatorio}.docx')
     # threFile = document.save('demo.docx')
 
     bio = io.BytesIO()
@@ -432,13 +438,14 @@ async def docs_arras(id:int):
     ftp.login(ftpUname, ftpPass)
 
     # fnames = ftp.nlst()
-    ftp.cwd("/var/www/html/backPyAvap/files")
+    # ftp.cwd("/var/www/html/backPyAvap/files")
+    ftp.cwd("/var/www/html/frontPyAvap/files")
 
-    localFilePath = 'arras.docx'
+    localFilePath = f'files/arras_{nameAleatorio}.docx'
 
     with open(localFilePath, 'rb') as file:
         print('ffff',file)
-        retCode =ftp.storbinary('STOR arras.docx', file, blocksize=1024*1024)
+        retCode =ftp.storbinary(f'STOR arras_{nameAleatorio}.docx', file, blocksize=1024*1024)
 
         ftp.quit()
 
@@ -460,7 +467,7 @@ async def docs_arras(id:int):
             'Access-Control-Allow-Credentials': True
             },
             "statusCode": 200,
-            'body': json.dumps({'status':'susccess', 'results':f'Se ha generado el contrato de arras y puedes descargarlo <a href="http://panel.avapagencia.com/files/{localFilePath}">aquí</a>'})
+            'body': json.dumps({'status':'susccess', 'results':f'Se ha generado el contrato de arras y puedes descargarlo <a href="http://panel.avapagencia.com/{localFilePath}">aquí</a>'})
             }
     return response
     

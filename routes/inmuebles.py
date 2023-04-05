@@ -2,8 +2,8 @@
 from fastapi import APIRouter
 # from fastapi.responses import FileResponse
 # from db.client import db_inmuebles, db_asociaciones
-from schemas.inmuebles import inmuebleEntity, inmueblesEntity
-from schemas.asociaciones import asociacionEntity,asociacionesEntity
+# from schemas.inmuebles import inmuebleEntity, inmueblesEntity
+# from schemas.asociaciones import asociacionEntity,asociacionesEntity
 from models.inmuebles import InmuebleModel
 from models.asociaciones import AsociacioneModels, AsociacioneCompraModels
 # from bson import ObjectId
@@ -18,15 +18,15 @@ import db.ConnToMysql as dataBase
 # from reportlab.lib.styles import ParagraphStyle
 # from reportlab.lib.styles import getSampleStyleSheet
 
-from auth.auth_handler import signJWT
-from auth.auth_bearer import JWTBearer
+# from auth.auth_handler import signJWT
+# from auth.auth_bearer import JWTBearer
 
-import pymysql.cursors
-from dotenv import dotenv_values,load_dotenv
-import os
+# import pymysql.cursors
+# from dotenv import dotenv_values,load_dotenv
+# import os
 import json
 
-load_dotenv('.env') 
+# load_dotenv('.env') 
 
 
 # from fastapi.encoders import jsonable_encoder
@@ -75,11 +75,11 @@ inmuebles = APIRouter()
 # @inmuebles.get("/inmuebles", dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
 @inmuebles.get("/inmuebles", tags=["inmuebles"])
 async def list_inmuebles():
+    # allInmu = dataBase.get_all_inmuebles()
     allInmu = dataBase.get_all_inmuebles()
     
     allInmuebles = []
     for nn in allInmu:
-        print('nn',nn)
         idInmueble = nn['id']
        
         dbVendedores = dataBase.get_vendedor_id_inmuebles(idInmueble)
@@ -148,70 +148,12 @@ async def list_inmuebles(id:int):
 
 # Servicio para crear inmueble - POST
 # @inmuebles.post("/inmuebles", response_model=InmuebleModel, dependencies=[Depends(JWTBearer())], tags=["inmuebles"])
-@inmuebles.post("/inmuebles")
-async def create_inmueble(inmueble:InmuebleModel):
-    inmueble = dict(inmueble)
+@inmuebles.post("/inmuebles", tags=["inmuebles"])
+async def create_inmueble(inmueble:dict):
+    # inmueble = dict(inmueble)
     dataBase.create_inmueble(inmueble)
-    # try:
-    #     connection = pymysql.connect(
-    #     host=os.environ.get("hostDB"),
-    #     user=os.environ.get("userDB"),
-    #     password=os.environ.get("passwordDB"),
-    #     database=os.environ.get("databaseDB"),
-    #     cursorclass=pymysql.cursors.DictCursor)
-
-    #     with connection.cursor() as cursor:
-    #         print('evento')
-    #         print(inmueble)
-    #         print('eventotipo')
-    #         print(type(inmueble))
-    #         tipologia = inmueble['tipologia']
-    #         provincia = inmueble['provincia']
-    #         municipio = inmueble['municipio']
-    #         direccion = inmueble['direccion']
-    #         refCatastral = inmueble['refCatastral'] 
-    #         superficie = inmueble['superficie'] 
-    #         descripNotaSimple = inmueble['descripNotaSimple'] 
-    #         inscripcionRegistro = inmueble['inscripcionRegistro']
-    #         cru = inmueble['cru'] 
-    #         precio = inmueble['precio'] 
-    #         finalizado = inmueble['finalizado']
-    #         llaves = inmueble['llaves']
-    #         fechaAlta= inmueble['fechaAlta']
-    #         comisionVen= inmueble['comisionVen']
-    #         comisionCom= inmueble['comisionCom']
-    #         observaciones= inmueble['observaciones']
-    #         comercial= inmueble['comercial']
-    #         dormitorios= inmueble['dormitorios']
-    #         banos= inmueble['banos']
-    #         exterior= inmueble['exterior']
-    #         operacion= inmueble['operacion']
-    #         cee= inmueble['cee']
-    #         cee= inmueble['cee']
-    #         descripcion= inmueble['descripcion']
-    #         ascensor= inmueble['ascensor']
-            
-    #         query = f"INSERT INTO avap.inmuebles (tipologia, provincia, municipio, direccion, refCatastral, superficie, descripNotaSimple, inscripcionRegistro, cru, precio, finalizado, llaves, fechaAlta, comisionVen,comisionCom,observaciones,comercial,dormitorios,banos,exterior,operacion,cee,descripcion,ascensor) VALUES ('{tipologia}', '{provincia}', '{municipio}', '{direccion}', '{refCatastral}', '{superficie}', '{descripNotaSimple}', '{inscripcionRegistro}', '{cru}', '{precio}', '{finalizado}', '{llaves}', '{fechaAlta}', '{comisionVen}', '{comisionCom}', '{observaciones}', '{comercial}', '{dormitorios}', '{banos}', '{exterior}', '{operacion}', '{cee}', '{descripcion}', '{ascensor}');"
-    #         print('query insert', query)
-    #         cursor.execute(query)
-    #         connection.commit()
-    #         idNewInmueble = cursor.lastrowid
-
-    #         msn = f'Se ha creado un inmueble con id {idNewInmueble}'
-
-    #         response = {
-    #             "headers": {
-    #             'Access-Control-Allow-Origin': '*',
-    #             'Access-Control-Allow-Credentials': True
-    #             },
-    #             "statusCode": 200,
-    #             'body': json.dumps({"status":"suscess","results":msn})
-    #             }
-    #         return response
-        
-    # finally:
-    #     cursor.close()
-    #     connection.close()
+    
+    
     
 
 # Servicio para devolver inmueble por ID - GET
