@@ -1,8 +1,8 @@
 from fastapi import FastAPI,Body,Depends
 from routes.inmuebles import inmuebles
-# from routes.vendedores import vendedores
-# from routes.compradores import compradores
-# from routes.comerciales import comerciales
+from routes.vendedores import vendedores
+from routes.compradores import compradores
+from routes.comerciales import comerciales
 # from routes.login import usuarios
 from routes.createDocs import docs
 from fastapi.middleware.cors import CORSMiddleware
@@ -61,9 +61,9 @@ app.add_middleware(
 users = []
 
 app.include_router(inmuebles)
-# app.include(vendedores)
-# app.include_router(compradores)
-# app.include_router(comerciales)
+app.include(vendedores)
+app.include_router(compradores)
+app.include_router(comerciales)
 app.include_router(docs)
 # app.include_router(usuarios)
 

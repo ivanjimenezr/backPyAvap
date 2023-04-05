@@ -1,6 +1,6 @@
 from fastapi import APIRouter,status, Depends,Request
 from fastapi.responses import FileResponse
-from db.client import db_usuarios
+# from db.client import db_usuarios
 # from schemas.usuarios import usuarioEntity, usuariosEntity
 # from models.usuarios import UsuarioModel
 from models.jwt import JWT

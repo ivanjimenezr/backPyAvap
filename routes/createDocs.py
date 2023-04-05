@@ -41,7 +41,7 @@ import db.ConnToMysql as dataBase
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-nameAleatorio = id_generator()
+
 
 # from fastapi.encoders import jsonable_encoder
 # from fastapi.responses import JSONResponse
@@ -351,7 +351,7 @@ async def docs_arras(id:int):
     zg = document.add_paragraph()
     zg_format = zg.paragraph_format
     zg_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    zg.add_run(f'Y para que así conste, una vez leído, firman este contrato por duplicado y a un solo efecto, en el lugar y fecha indicados en el encabezamiento')
+    zg.add_run(f'Y para que así conste, una vez leído, firman este contrato por duplicado y a un solo efecto, en el lugar y fecha indicados en el encabezamiento.')
 
     numVende = len(vendedores)
     datos = []
@@ -376,6 +376,39 @@ async def docs_arras(id:int):
     #     row_cells[0].text = str(qty)
     #     row_cells = table.add_row().cells
     #     row_cells[1].text = id
+
+    table = document.add_table(rows=1, cols=2)
+    hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'PARTE VENDEDORA'.bold = True
+    hdr_cells[1].text = 'PARTE COMPRADORA'.bold = True
+    for qty, id in records:
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(qty)
+        row_cells = table.add_row().cells
+        row_cells[0].text = id
+        row_cells = table.add_row().cells
+        row_cells[0].text = 'Firma:'
+        row_cells = table.add_row().cells
+        row_cells[0].text = ''
+    # records = (
+    # (3, '101', 'Spam'),
+    # (7, '422', 'Eggs'),
+    # (4, '631', 'Spam, spam, eggs, and spam')
+    # (4, '631', 'Spam, spam, eggs, and spam')
+    # )
+
+
+    # table = document.add_table(rows=1, cols=3)
+    # hdr_cells = table.rows[0].cells
+    # hdr_cells[0].text = 'Qty'
+    # hdr_cells[1].text = 'Id'
+    # hdr_cells[2].text = 'Desc'
+    # hdr_cells[2].text = 'Desc'
+    # for qty, id, desc in records:
+    #     row_cells = table.add_row().cells
+    #     row_cells[0].text = str(qty)
+    #     row_cells[1].text = id
+    #     row_cells[2].text = desc
 
 
 
@@ -416,7 +449,7 @@ async def docs_arras(id:int):
     #     row_cells[2].text = desc
 
     document.add_page_break()
-
+    nameAleatorio = id_generator()
     document.save(f'files/arras_{nameAleatorio}.docx')
     # threFile = document.save('demo.docx')
 

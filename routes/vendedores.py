@@ -1,6 +1,6 @@
 from fastapi import APIRouter,status, Response,BackgroundTasks,Depends
 from fastapi.responses import FileResponse
-from db.client import db_vendedores
+# from db.client import db_vendedores
 from schemas.vendedores import vendedorEntity, vendedoresEntity
 from models.vendedores import VendedorModel
 from bson import ObjectId
@@ -97,138 +97,109 @@ async def list_vendedores():
 
 # Serviciopara crear vendedores - POST
 # @vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-@vendedores.post("/vendedores", response_model=VendedorModel)
-async def create_vendedor(vendedor: VendedorModel):
-    vendedor_dic = dict(vendedor)
+# @vendedores.post("/vendedores", response_model=VendedorModel)
+# async def create_vendedor(vendedor: VendedorModel):
+#     vendedor_dic = dict(vendedor)
 
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+#     try:
+#         connection = pymysql.connect(
+#         host=os.environ.get("hostDB"),
+#         user=os.environ.get("userDB"),
+#         password=os.environ.get("passwordDB"),
+#         database=os.environ.get("databaseDB"),
+#         cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
-            print('evento')
-            print(vendedor_dic)
-            nombre = vendedor_dic['nombre']
-            dni = vendedor_dic['dni']
-            direccion = vendedor_dic['direccion']
-            municipio = vendedor_dic['municipio']
-            provincia = vendedor_dic['provincia'] 
-            email = vendedor_dic['email'] 
-            telefono = vendedor_dic['telefono'] 
-            fechaNacimiento = vendedor_dic['fechaNacimiento']
-            estadoCivil = vendedor_dic['estadoCivil'] 
-            fechaAlta = vendedor_dic['fechaAlta'] 
-            finalizado = vendedor_dic['finalizado']
+#         with connection.cursor() as cursor:
+#             print('evento')
+#             print(vendedor_dic)
+#             nombre = vendedor_dic['nombre']
+#             dni = vendedor_dic['dni']
+#             direccion = vendedor_dic['direccion']
+#             municipio = vendedor_dic['municipio']
+#             provincia = vendedor_dic['provincia'] 
+#             email = vendedor_dic['email'] 
+#             telefono = vendedor_dic['telefono'] 
+#             fechaNacimiento = vendedor_dic['fechaNacimiento']
+#             estadoCivil = vendedor_dic['estadoCivil'] 
+#             fechaAlta = vendedor_dic['fechaAlta'] 
+#             finalizado = vendedor_dic['finalizado']
             
             
-            query = f"INSERT INTO avap.vendedores (nombre, dni, direccion, municipio, provincia, email, telefono, fechaNacimiento, estadoCivil, fechaAlta, finalizado) VALUES ('{nombre}', '{dni}', '{direccion}', '{municipio}', '{provincia}', '{email}', '{telefono}', '{fechaNacimiento}', '{estadoCivil}', '{fechaAlta}', {finalizado});"
-            print('query insert', query)
-            cursor.execute(query)
-            connection.commit()
-            idNewvendedor = cursor.lastrowid
+#             query = f"INSERT INTO avap.vendedores (nombre, dni, direccion, municipio, provincia, email, telefono, fechaNacimiento, estadoCivil, fechaAlta, finalizado) VALUES ('{nombre}', '{dni}', '{direccion}', '{municipio}', '{provincia}', '{email}', '{telefono}', '{fechaNacimiento}', '{estadoCivil}', '{fechaAlta}', {finalizado});"
+#             print('query insert', query)
+#             cursor.execute(query)
+#             connection.commit()
+#             idNewvendedor = cursor.lastrowid
 
-            msn = f'Se ha creado un nuevo vendedor con id {idNewvendedor}'
+#             msn = f'Se ha creado un nuevo vendedor con id {idNewvendedor}'
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps({"status":"suscess","results":msn})
-                }
-            return response
+#             response = {
+#                 "headers": {
+#                 'Access-Control-Allow-Origin': '*',
+#                 'Access-Control-Allow-Credentials': True
+#                 },
+#                 "statusCode": 200,
+#                 'body': json.dumps({"status":"suscess","results":msn})
+#                 }
+#             return response
             
-    finally:
-        cursor.close()
-        connection.close()
-    # id = db_vendedores.insert_one(vendedor_dic).inserted_id
-    # new_inmueble = db_vendedores.find_one({"_id": id})
-    # return vendedorEntity(new_inmueble)
+#     finally:
+#         cursor.close()
+#         connection.close()
+    
     
 
 # Servicio para devolver vendedor por ID - GET
-@vendedores.get("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-async def get_vendedor(id:str):
-    try:
-        connection = pymysql.connect(
-        host=os.environ.get("hostDB"),
-        user=os.environ.get("userDB"),
-        password=os.environ.get("passwordDB"),
-        database=os.environ.get("databaseDB"),
-        cursorclass=pymysql.cursors.DictCursor)
+# @vendedores.get("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+# async def get_vendedor(id:str):
+#     try:
+#         connection = pymysql.connect(
+#         host=os.environ.get("hostDB"),
+#         user=os.environ.get("userDB"),
+#         password=os.environ.get("passwordDB"),
+#         database=os.environ.get("databaseDB"),
+#         cursorclass=pymysql.cursors.DictCursor)
 
-        with connection.cursor() as cursor:
+#         with connection.cursor() as cursor:
             
-            query = f"SELECT * FROM avap.vendedores WHERE id = {id}"
-            cursor.execute(query)
-            db = cursor.fetchone()
-            print("Resultados de db: ", db)
+#             query = f"SELECT * FROM avap.vendedores WHERE id = {id}"
+#             cursor.execute(query)
+#             db = cursor.fetchone()
+#             print("Resultados de db: ", db)
 
-            response = {
-                "headers": {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True
-                },
-                "statusCode": 200,
-                'body': json.dumps(db)
-                }
-            return db
-    finally:
-        cursor.close()
-        connection.close()
-    # return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
+#             response = {
+#                 "headers": {
+#                 'Access-Control-Allow-Origin': '*',
+#                 'Access-Control-Allow-Credentials': True
+#                 },
+#                 "statusCode": 200,
+#                 'body': json.dumps(db)
+#                 }
+#             return db
+#     finally:
+#         cursor.close()
+#         connection.close()
 
 # Servicio para borrar un vendedor por ID - DELETE
-@vendedores.delete("/vendedores/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-def delete_vendedor(id:str):
-    found =  db_vendedores.find_one_and_delete({"_id": ObjectId(id)})
-    if not found:
-        return {"error":"No se ha borrado el vendedor"}
+# @vendedores.delete("/vendedores/{id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+# def delete_vendedor(id:str):
+#     found =  db_vendedores.find_one_and_delete({"_id": ObjectId(id)})
+#     if not found:
+#         return {"error":"No se ha borrado el vendedor"}
 
 # Servicio para actualizar vendedor por ID - GET
 # @vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-@vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-async def up_vendedor(id:str, vendedor:VendedorModel):
-    req = {k: v for k, v in vendedor.dict().items() if v is not None}
-    db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
-    return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
+# @vendedores.put("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
+# async def up_vendedor(id:str, vendedor:VendedorModel):
+#     req = {k: v for k, v in vendedor.dict().items() if v is not None}
+#     db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":dict(req)})
+#     return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 
 # Servicio para finalizar vendedor por ID - GET
 # @vendedores.patch("/vendedores/{id}", dependencies=[Depends(JWTBearer())], tags=["vendedores"])
-@vendedores.patch("/vendedores/{id}", tags=["vendedores"])
-async def finalizar_vendedor(id:str, vendedorFin:VendedorModel):
-    req = {k: v for k, v in vendedorFin.dict().items() if v is not None}
-    db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
-    return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
-
-
-    # headers = {'Content-Disposition': 'inline; filename="out.pdf"'}
-    # pdf = buf.getvalue()
-    # buf.close()
-    
-    
-    # return inmueble, FileResponse
-    # headers = {'Content-Disposition': 'attachment; filename="arras.pdf"'}
-    # headers=['Content- Type','Authorization']
-    # headers=['Content- Type','Authorization']
-    # pdf.add('Access-Control-Allow-Origin', '*')
-    # return FileResponse(buf)
-    # return
-
-
-# Servicio para UPDATE inmueble por ID - PATCH
-# @inmuebles.patch("/{uid}")
-# def update_inmueble(uid: str, uu: InmuebleUpdate):
-#     updates = {k:v for k,v in uu.dict().items() if v is not None}
-#     try:
-#         client.db.update(updates,uid)
-#         return client.db_inmuebles.get(uid)
-#     except Exception:
-#         return JSONResponse({"message":"Inmueble not found"}, status_code=404)
-
+# @vendedores.patch("/vendedores/{id}", tags=["vendedores"])
+# async def finalizar_vendedor(id:str, vendedorFin:VendedorModel):
+#     req = {k: v for k, v in vendedorFin.dict().items() if v is not None}
+#     db_vendedores.find_one_and_update({"_id": ObjectId(id)},{"$set":req})
+#     return vendedorEntity( db_vendedores.find_one({"_id": ObjectId(id)}))
 

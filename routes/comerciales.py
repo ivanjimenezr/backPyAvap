@@ -1,6 +1,6 @@
 from fastapi import APIRouter,status, Response,BackgroundTasks,Depends
 from fastapi.responses import FileResponse
-from db.client import db_vendedores
+# from db.client import db_vendedores
 from schemas.vendedores import vendedorEntity, vendedoresEntity
 from models.vendedores import VendedorModel
 from bson import ObjectId
