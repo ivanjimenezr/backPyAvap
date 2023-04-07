@@ -3,7 +3,7 @@ from routes.inmuebles import inmuebles
 from routes.vendedores import vendedores
 from routes.compradores import compradores
 from routes.comerciales import comerciales
-# from routes.login import usuarios
+from routes.login import usuarios
 from routes.createDocs import docs
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -23,7 +23,7 @@ from bson import ObjectId
 # from dotenv import dotenv_values,load_dotenv
 # import os
 # import json
-# import db.ConnToMysql as dataBase
+import db.ConnToMysql as dataBase
 
 # load_dotenv('.env') 
 
@@ -65,22 +65,22 @@ app.include_router(vendedores)
 app.include_router(compradores)
 app.include_router(comerciales)
 app.include_router(docs)
-# app.include_router(usuarios)
+app.include_router(usuarios)
 
-# @app.post("/user/signup", tags=["user"])
-# async def create_user(user: UserSchema = Body(...)):
-#     users.append(user) # replace with db call, making sure to hash the password first
-#     return signJWT(user.email)
+@app.post("/user/signup", tags=["user"])
+async def create_user(user: UserSchema = Body(...)):
+    users.append(user) # replace with db call, making sure to hash the password first
+    return signJWT(user.email)
 
-# def check_user(data: UserLoginSchema):
-#     data = dict(data)
-#     pd = dataBase.find_usuario(data)
-#     return pd
+def check_user(data: UserLoginSchema):
+    data = dict(data)
+    pd = dataBase.find_usuario(data)
+    return pd
 
-# @app.post("/user/login", tags=["user"])
-# async def user_login(user: UserLoginSchema = Body(...)):
-#     if check_user(user):
-#         return signJWT(user.email)
-#     return {
-#         "error": "Wrong login details!"
-#     }
+@app.post("/user/login", tags=["user"])
+async def user_login(user: UserLoginSchema = Body(...)):
+    if check_user(user):
+        return signJWT(user.email)
+    return {
+        "error": "Wrong login details!"
+    }
