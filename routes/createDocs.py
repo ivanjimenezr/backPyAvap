@@ -559,6 +559,8 @@ async def docs_arras(id:int):
     with open(localFilePath, 'rb') as file:
         print('ffff',file)
         retCode =ftp.storbinary(f'STOR arras_{nameAleatorio}.docx', file, blocksize=1024*1024)
+        ftp.sendcmd(f'SITE CHMOD 644 arras_{nameAleatorio}.docx')
+        # print(ftp.sendcmd('SITE CHMOD 644 '+localFilePath))
 
         ftp.quit()
 
