@@ -106,7 +106,9 @@ async def docs_arras(id:int):
     restanteLetras = num2words(restante, lang ='es').upper()
 
     importeArrasLetras = num2words(importeArras, lang ='es').upper()
-    
+
+    importeArrasPenalizacion = importeArras * 2
+    importeArrasPenalizacionLetras = num2words(importeArrasPenalizacion, lang ='es').upper()
     document = Document()
 
     document.add_heading(f'CONTRATO DE ARRAS PENITENCIALES', 0).center=True
@@ -244,8 +246,8 @@ async def docs_arras(id:int):
     q_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     q.add_run(f'B.- ').bold = True
     q.add_run(f'Si en el transcurso de los próximos tres días la parte VENDEDORA no hubiera recibido en su cuenta la transferencia de ')
-    q.add_run(f' {importeArrasLetras} EUROS ({importeArras} €) ').bold = True
-    q.add_run(f' indicado en la estipulación A, el presente contrato de Arras quedará nulo y sin efecto alguno.')
+    q.add_run(f'{importeArrasLetras} EUROS ({importeArras} €) ').bold = True
+    q.add_run(f'indicado en la estipulación A, el presente contrato de Arras quedará nulo y sin efecto alguno.')
 
     r = document.add_paragraph()
     r_format = r.paragraph_format
@@ -288,7 +290,7 @@ async def docs_arras(id:int):
     # document.add_page_break()
     w_format = w.paragraph_format
     w_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    w.add_run(f'Dado el carácter penitencial de estas arras y de acuerdo con lo establecido en el artículo 1.454 del Código Civil, si llegada la fecha máxima para formalizar la escritura de la compraventa la parte COMPRADORA hubiera incumplido lo convenido en el presente contrato, perderá la cantidad de ____________ EUROS (_____,__ €) entregados a cuenta, y no tendrán ningún derecho de compra sobre el inmueble objeto del presente documento. ')
+    w.add_run(f'Dado el carácter penitencial de estas arras y de acuerdo con lo establecido en el artículo 1.454 del Código Civil, si llegada la fecha máxima para formalizar la escritura de la compraventa la parte COMPRADORA hubiera incumplido lo convenido en el presente contrato, perderá la cantidad de {importeArrasLetras} EUROS ({importeArras} €) entregados a cuenta, y no tendrán ningún derecho de compra sobre el inmueble objeto del presente documento. ')
     if condiPrestamo:
         w.add_run(f'Excepto en el caso que a la parte COMPRADORA no le fuera concedido el préstamo hipotecario; en este caso la parte VENDEDORA devolverá el valor de arras íntegro a la parte COMPRADORA.')
 
@@ -306,12 +308,12 @@ async def docs_arras(id:int):
     z = document.add_paragraph()
     z_format = z.paragraph_format
     z_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    z.add_run(f'Si fuera la parte VENDEDORA quien incumpliera lo convenido en el presente contrato, deberá abonar a la parte COMPRADORA el doble de la cantidad recibida en concepto de arras o señal, es decir, la suma total de ____________ EUROS (_____,__ €)')
+    z.add_run(f'Si fuera la parte VENDEDORA quien incumpliera lo convenido en el presente contrato, deberá abonar a la parte COMPRADORA el doble de la cantidad recibida en concepto de arras o señal, es decir, la suma total de {importeArrasPenalizacionLetras} EUROS ({importeArrasPenalizacion} €)')
 
     za = document.add_paragraph()
     za_format = za.paragraph_format
     za_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    za.add_run(f'QUINTA.- La finca indicada en las manifestaciones I, se transmitirá libre de cargas y gravámenes, arrendamientos y ocupantes y al corriente de pago de la comunidad de propietarios e impuestos (a la escritura se aportarán los certificados correspondientes).').bold = True
+    za.add_run(f'QUINTA.- La finca indicada en las manifestaciones I, se transmitirá libre de cargas y gravámenes, arrendamientos y ocupantes y al corriente de pago de la comunidad de propietarios e impuestos (a la escritura se aportarán los certificados correspondientes).')#.bold = True
 
     zb = document.add_paragraph()
     zb_format = zb.paragraph_format
@@ -411,14 +413,15 @@ async def docs_arras(id:int):
     #     row_cells[1].text = ''
 
     
-    marks = {"English" : 78, "Physics" : 98, "Chemistry" : 78} 
     
     
     tableC = document.add_table(rows=1, cols=2)
     hdr_cells = tableC.rows[0].cells
-    hdr_cells[0].text = 'PARTE VENDEDORA'
-    hdr_cells[1].text = 'PARTE COMPRADORA'
+    # hdr_cells[0].text = 'PARTE VENDEDORA'
+    # hdr_cells[1].text = 'PARTE COMPRADORA'
     row_cells = tableC.add_row().cells
+    hdr_cells[0].paragraphs[0].add_run('PARTE VENDEDORA').bold=True
+    hdr_cells[1].paragraphs[0].add_run('PARTE COMPRADORA').bold=True
 
     lenVendedores = len(recordsV)*5
     lenCompradores = len(recordsC)*5
