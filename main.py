@@ -65,10 +65,11 @@ app.include_router(vendedores)
 app.include_router(compradores)
 app.include_router(comerciales)
 app.include_router(docs)
-app.include_router(usuarios)
+# app.include_router(usuarios)
 
 @app.post("/user/signup", tags=["user"])
 async def create_user(user: UserSchema = Body(...)):
+    print('entro en create_user', user)
     users.append(user) # replace with db call, making sure to hash the password first
     return signJWT(user.email)
 

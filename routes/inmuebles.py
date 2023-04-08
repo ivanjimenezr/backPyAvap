@@ -1,5 +1,5 @@
 # from fastapi import APIRouter,status, Response,BackgroundTasks, Depends
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends,Body
 # from fastapi.responses import FileResponse
 # from db.client import db_inmuebles, db_asociaciones
 # from schemas.inmuebles import inmuebleEntity, inmueblesEntity
@@ -19,7 +19,7 @@ import db.ConnToMysql as dataBase
 # from reportlab.lib.styles import getSampleStyleSheet
 
 # from auth.auth_handler import signJWT
-# from auth.auth_bearer import JWTBearer
+from auth.auth_bearer import JWTBearer
 
 # import pymysql.cursors
 # from dotenv import dotenv_values,load_dotenv
