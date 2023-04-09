@@ -303,6 +303,55 @@ try:
         db = cursor.fetchall()
         return db
     
+# Vendedor por Id
+    def get_vendedores_id(id):
+        query = f"SELECT * FROM avap.vendedores where id = {id} "
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        return db
+
+# Actualizar un vendedor
+    def up_vendedor_id(id, vendedor):
+        query = f"SELECT * FROM avap.vendedores WHERE id={id}"
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        if db:
+
+            nombre = vendedor['nombre']
+            dni = vendedor['dni']
+            direccion = vendedor['direccion']
+            email = vendedor['email']
+            telefono = vendedor['telefono'] 
+            fechaNacimiento = vendedor['fechaNacimiento'] 
+            estadoCivil = vendedor['estadoCivil'] 
+            fechaAlta = vendedor['fechaAlta']
+            finalizado = vendedor['finalizado'] 
+            municipio = vendedor['municipio'] 
+            provincia = vendedor['provincia']
+            
+            query1 = f"UPDATE avap.vendedores SET nombre = '{nombre}', dni = '{dni}', direccion = '{direccion}', email = '{email}', telefono = '{telefono}', fechaNacimiento = '{fechaNacimiento}', estadoCivil = '{estadoCivil}', fechaAlta = '{fechaAlta}', municipio = '{municipio}', finalizado = {finalizado}, provincia = '{provincia}' WHERE id = {id};"
+            cursor.execute(query1)
+            con.commit()
+
+        return   
     
     def createAsociaVendedor(id,vendedor):
 

@@ -65,6 +65,20 @@ async def list_vendedores():
             'body': json.dumps(allVende)
             }
     return allVende
+
+#Servicio para devolver vendedor por id - GET
+@vendedores.get("/vendedores/{id}")
+async def get_vendedores_id(id:int):
+    vendedor = dataBase.get_vendedores_id(id)
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(vendedor)
+            }
+    return vendedor
     # try:
     #     connection = pymysql.connect(
     #     host=os.environ.get("hostDB"),
@@ -94,7 +108,19 @@ async def list_vendedores():
     #     connection.close()
     # return  vendedoresEntity(db_vendedores.find())
 
-
+@vendedores.post("/vendedores/{id}")
+async def vendedor(id:str, vendedor:VendedorModel):
+    vendedor = dict(vendedor)
+    db = dataBase.up_vendedor_id(id, vendedor)
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps({"status":"suscess", "result":f"El vendedor {id} se ha actualizado."})
+            }
+    return response
 # Serviciopara crear vendedores - POST
 # @vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 # @vendedores.post("/vendedores", response_model=VendedorModel)
