@@ -353,6 +353,7 @@ try:
 
         return   
     
+
     def createAsociaVendedor(id,vendedor):
 
 
@@ -381,8 +382,83 @@ try:
 
 
         return msn
+#Nuevo vendedor
+    def create_vendedor(vendedor):
+        nombre = vendedor['nombre']
+        dni = vendedor['dni']
+        direccion = vendedor['direccion']
+        email = vendedor['email']
+        telefono = vendedor['telefono'] 
+        fechaNacimiento = vendedor['fechaNacimiento'] 
+        estadoCivil = vendedor['estadoCivil'] 
+        fechaAlta = vendedor['fechaAlta']
+        finalizado = vendedor['finalizado'] 
+        municipio = vendedor['municipio'] 
+        provincia = vendedor['provincia']
+
+        query = f"INSERT INTO avap.vendedores (nombre,dni,direccion,email,telefono,fechaNacimiento,estadoCivil,fechaAlta,finalizado,municipio,provincia) VALUES ('{nombre}', '{dni}', '{direccion}', '{email}', '{telefono}', '{fechaNacimiento}', '{estadoCivil}', '{fechaAlta}', {finalizado}, '{municipio}', '{provincia}');"
+        cursor.execute(query)
+        # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        con.commit()
+        idNewVendedor = cursor.lastrowid
+        
+        
+
+        msn = f'Se ha creado un inmueble con id {idNewVendedor}'
+
+        response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps({"status":"suscess","results":msn})
+            }
+        return response  
+
+#Finalizar vendedor
+    def finalizar_vendedor(id, vendedorFin):
+        query = f"SELECT * FROM avap.vendedores WHERE id={id}"
     
-    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        if db:
+            vendedorFin = dict(vendedorFin)
+            estadoFin = vendedorFin['finalizado']
+
+            print('EstadoFinnnn',estadoFin )
+            
+            query = f"UPDATE avap.vendedores SET finalizado = {estadoFin} WHERE id = {id};"
+            print('query insert', query)
+            cursor.execute(query)
+            con.commit()
+
+            msn = f'Se ha cambiado el estado de finalizado el vendedor con id {id}'
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps({"status":"suscess","results":msn})
+                }
+            return response   
 
     #### COMPRADORES #####
     ####################
@@ -402,7 +478,97 @@ try:
         cursor.execute(query)
         db = cursor.fetchall()
         return db
+# Comprador por Id
+    def get_compradores_id(id):
+        query = f"SELECT * FROM avap.compradores where id = {id} "
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
 
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        return db
+    
+# Actualizar un comprador
+    def up_comprador_id(id, comprador):
+        query = f"SELECT * FROM avap.compradores WHERE id={id}"
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        if db:
+
+            nombre = comprador['nombre']
+            dni = comprador['dni']
+            direccion = comprador['direccion']
+            email = comprador['email']
+            telefono = comprador['telefono'] 
+            fechaNacimiento = comprador['fechaNacimiento'] 
+            estadoCivil = comprador['estadoCivil'] 
+            fechaAlta = comprador['fechaAlta']
+            finalizado = comprador['finalizado'] 
+            municipio = comprador['municipio'] 
+            provincia = comprador['provincia']
+            
+            query1 = f"UPDATE avap.compradores SET nombre = '{nombre}', dni = '{dni}', direccion = '{direccion}', email = '{email}', telefono = '{telefono}', fechaNacimiento = '{fechaNacimiento}', estadoCivil = '{estadoCivil}', fechaAlta = '{fechaAlta}', municipio = '{municipio}', finalizado = {finalizado}, provincia = '{provincia}' WHERE id = {id};"
+            cursor.execute(query1)
+            con.commit()
+
+        return   
+
+#Nuevo comprador
+    def create_comprador(comprador):
+        nombre = comprador['nombre']
+        dni = comprador['dni']
+        direccion = comprador['direccion']
+        email = comprador['email']
+        telefono = comprador['telefono'] 
+        fechaNacimiento = comprador['fechaNacimiento'] 
+        estadoCivil = comprador['estadoCivil'] 
+        fechaAlta = comprador['fechaAlta']
+        finalizado = comprador['finalizado'] 
+        municipio = comprador['municipio'] 
+        provincia = comprador['provincia']
+
+        query = f"INSERT INTO avap.compradores (nombre,dni,direccion,email,telefono,fechaNacimiento,estadoCivil,fechaAlta,finalizado,municipio,provincia) VALUES ('{nombre}', '{dni}', '{direccion}', '{email}', '{telefono}', '{fechaNacimiento}', '{estadoCivil}', '{fechaAlta}', {finalizado}, '{municipio}', '{provincia}');"
+        print('query insert', query)
+        cursor.execute(query)
+        # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        con.commit()
+        idNewComprador = cursor.lastrowid
+        
+        
+
+        msn = f'Se ha creado un inmueble con id {idNewComprador}'
+
+        response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps({"status":"suscess","results":msn})
+            }
+        return response
 # Asociar compradores a inmuebles
     def createAsociaComprador(id,comprador):
 
@@ -433,8 +599,45 @@ try:
 
         return msn
 
-    #### COMERCIALES #####
-    ####################
+#Finalizar comprador
+    def finalizar_comprador(id, compradorFin):
+        query = f"SELECT * FROM avap.compradores WHERE id={id}"
+    
+    # global connection timeout arguments
+        global_connect_timeout = 'SET GLOBAL connect_timeout=180'
+        global_wait_timeout = 'SET GLOBAL connect_timeout=180'
+        global_interactive_timeout = 'SET GLOBAL connect_timeout=180'
+
+        cursor.execute(global_connect_timeout)
+        cursor.execute(global_wait_timeout)
+        cursor.execute(global_interactive_timeout)
+        cursor.execute(query)
+        db = cursor.fetchone()
+        if db:
+            compradorFin = dict(compradorFin)
+            estadoFin = compradorFin['finalizado']
+
+            print('EstadoFinnnn',estadoFin )
+            
+            query = f"UPDATE avap.compradores SET finalizado = {estadoFin} WHERE id = {id};"
+            print('query insert', query)
+            cursor.execute(query)
+            con.commit()
+
+            msn = f'Se ha cambiado el estado de finalizado el comprador con id {id}'
+
+            response = {
+                "headers": {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': True
+                },
+                "statusCode": 200,
+                'body': json.dumps({"status":"suscess","results":msn})
+                }
+            return response 
+
+#### COMERCIALES #####
+####################
 # Todos los comerciales
     def get_all_comerciales():
         query = "SELECT * FROM avap.comerciales"

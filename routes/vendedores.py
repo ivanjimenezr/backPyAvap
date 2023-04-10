@@ -108,6 +108,7 @@ async def get_vendedores_id(id:int):
     #     connection.close()
     # return  vendedoresEntity(db_vendedores.find())
 
+#Servicio para actualizar un vendedor
 @vendedores.post("/vendedores/{id}")
 async def vendedor(id:str, vendedor:VendedorModel):
     vendedor = dict(vendedor)
@@ -121,7 +122,21 @@ async def vendedor(id:str, vendedor:VendedorModel):
             'body': json.dumps({"status":"suscess", "result":f"El vendedor {id} se ha actualizado."})
             }
     return response
+
 # Serviciopara crear vendedores - POST
+@vendedores.post("/vendedores", tags=["vendedores"])
+async def create_vendedor(vendedor:dict):
+    # inmueble = dict(inmueble)
+    dataBase.create_vendedor(vendedor)
+
+# Serviciopara finalizar vendedores - patch
+@vendedores.patch("/vendedores/{id}")
+async def finalizar_vendedor(id:str, vendedorFin:VendedorModel):
+    dataBase.finalizar_vendedor(id, vendedorFin)
+
+
+
+
 # @vendedores.post("/vendedores", response_model=VendedorModel, dependencies=[Depends(JWTBearer())], tags=["vendedores"])
 # @vendedores.post("/vendedores", response_model=VendedorModel)
 # async def create_vendedor(vendedor: VendedorModel):

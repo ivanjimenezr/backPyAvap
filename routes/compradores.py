@@ -66,6 +66,45 @@ async def list_compradores():
     return allCompra
     # return  compradoresEntity(db_compradores.find())
 
+#Servicio para devolver comprador por id - GET
+@compradores.get("/compradores/{id}")
+async def get_compradores_id(id:int):
+    comprador = dataBase.get_compradores_id(id)
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps(comprador)
+            }
+    return comprador
+
+#Servicio para actualizar comprador por id - GET
+@compradores.post("/compradores/{id}")
+async def comprador(id:str, comprador:CompradorModel):
+    comprador = dict(comprador)
+    db = dataBase.up_comprador_id(id, comprador)
+    response = {
+            "headers": {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': True
+            },
+            "statusCode": 200,
+            'body': json.dumps({"status":"suscess", "result":f"El comprador {id} se ha actualizado."})
+            }
+    return response
+
+# Serviciopara crear compradores - POST
+@compradores.post("/compradores", tags=["compradores"])
+async def create_comprador(comprador:dict):
+    dataBase.create_comprador(comprador)
+
+# Serviciopara finalizar compradores - patch
+@compradores.patch("/compradores/{id}")
+async def finalizar_comprador(id:str, compradorFin:CompradorModel):
+    dataBase.finalizar_comprador(id, compradorFin)
+
 
 # Serviciopara crear compradores - POST
 # @compradores.post("/compradores", response_model=CompradorModel, dependencies=[Depends(JWTBearer())], tags=["compradores"])
