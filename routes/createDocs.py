@@ -1,6 +1,8 @@
 from fastapi import APIRouter,status, Response,BackgroundTasks, Depends
 from fastapi.responses import FileResponse
 
+import locale
+
 from docx import Document
 from docx.shared import Inches,Pt,RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -22,6 +24,16 @@ import db.ConnToMysql as dataBase
 from num2words import num2words
 
 # load_dotenv('.env') 
+
+locale.setlocale(locale.LC_ALL,'es_ES.UTF-8')
+now=datetime.datetime.now()
+print(now.strftime("%H:%M %d/%b/%Y"))
+mes = now.strftime("%B").upper()
+dia = now.strftime("%d")
+print(mes)
+# datatime_object = datetime.datetime.strftime(str(mes),"%m")
+# nombre_mes = datatime_object.strftime("%B")
+# print('nombre_mes', nombre_mes.lower())
 
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
@@ -56,8 +68,15 @@ docs = APIRouter()
 # app = FastAPI()
 
 year = datetime.date.today().year
+today = datetime.date.today()
 
+def puntos_millar(numero):
+    # new='{:,}'.format(numero).replace(',','.')
+    new = '{:,.2f}'.format(float(numero)).replace(",", "@").replace(".", ",").replace("@", ".")
+    return new
 
+    print('El precio es:', uu)
+    # print('El precio es: {:,.2f}'.format(float(precio)).replace(",", "@").replace(".", ",").replace("@", "."))
 
 @docs.get("/arras/{id}")
 async def docs_arras(id:int):
@@ -116,7 +135,7 @@ async def docs_arras(id:int):
     fecha = document.add_paragraph()
     fecha_format = fecha.paragraph_format
     fecha_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-    fecha.add_run(f'En _________, a __ de ________ de 202__')
+    fecha.add_run(f'En _________, a {dia} de {mes} de {year}')
     
     g=document.add_paragraph()
     g_format = g.paragraph_format
@@ -224,8 +243,9 @@ async def docs_arras(id:int):
 
     
     n.add_run(f'El precio de la compraventa se fija en ')
-    n.add_run(f'{precioLetras} EUROS ({precio} €) ').bold = True
+    n.add_run(f'{precioLetras} EUROS ({puntos_millar(precio)} €) ').bold = True
     n.add_run(f'más los impuestos y gastos que correspondan.')
+    
 
     o = document.add_paragraph()
     o_format = o.paragraph_format
@@ -238,7 +258,7 @@ async def docs_arras(id:int):
     p_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     p.add_run(f'A.- ').bold = True
     p.add_run(f'Un primer pago que realiza la parte COMPRADORA por la cantidad de ')
-    p.add_run(f'{importeArrasLetras} EUROS ({importeArras:,.2f} €) ').bold = True
+    p.add_run(f'{importeArrasLetras} EUROS ({puntos_millar(importeArras)} €) ').bold = True
     p.add_run(f'realizado mediante transferencia bancaria de fecha _______ a la cuenta número: ES____ de __. Perteneciente a la parte VENDEDORA, y cuyo justificante se aporta al presente contrato de arras.')
 
     q = document.add_paragraph()
@@ -246,7 +266,7 @@ async def docs_arras(id:int):
     q_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     q.add_run(f'B.- ').bold = True
     q.add_run(f'Si en el transcurso de los próximos tres días la parte VENDEDORA no hubiera recibido en su cuenta la transferencia de ')
-    q.add_run(f'{importeArrasLetras} EUROS ({importeArras} €) ').bold = True
+    q.add_run(f'{importeArrasLetras} EUROS ({puntos_millar(importeArras)} €) ').bold = True
     q.add_run(f'indicado en la estipulación A, el presente contrato de Arras quedará nulo y sin efecto alguno.')
 
     r = document.add_paragraph()
@@ -260,7 +280,7 @@ async def docs_arras(id:int):
     s_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     s.add_run(f'D.- ').bold = True
     s.add_run(f'La cantidad restante que asciende a ')
-    s.add_run(f'{restanteLetras} EUROS ({restante} €) ').bold = True
+    s.add_run(f'{restanteLetras} EUROS ({puntos_millar(restante)} €) ').bold = True
     s.add_run(f'más los impuestos y gastos que correspondan, se abonará en el momento en el que se formalice la escritura de compraventa ante notario.')
 
 
@@ -290,7 +310,7 @@ async def docs_arras(id:int):
     # document.add_page_break()
     w_format = w.paragraph_format
     w_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    w.add_run(f'Dado el carácter penitencial de estas arras y de acuerdo con lo establecido en el artículo 1.454 del Código Civil, si llegada la fecha máxima para formalizar la escritura de la compraventa la parte COMPRADORA hubiera incumplido lo convenido en el presente contrato, perderá la cantidad de {importeArrasLetras} EUROS ({importeArras} €) entregados a cuenta, y no tendrán ningún derecho de compra sobre el inmueble objeto del presente documento. ')
+    w.add_run(f'Dado el carácter penitencial de estas arras y de acuerdo con lo establecido en el artículo 1.454 del Código Civil, si llegada la fecha máxima para formalizar la escritura de la compraventa la parte COMPRADORA hubiera incumplido lo convenido en el presente contrato, perderá la cantidad de {importeArrasLetras} EUROS ({puntos_millar(importeArras)} €) entregados a cuenta, y no tendrán ningún derecho de compra sobre el inmueble objeto del presente documento. ')
     if condiPrestamo:
         w.add_run(f'Excepto en el caso que a la parte COMPRADORA no le fuera concedido el préstamo hipotecario; en este caso la parte VENDEDORA devolverá el valor de arras íntegro a la parte COMPRADORA.')
 
@@ -308,7 +328,7 @@ async def docs_arras(id:int):
     z = document.add_paragraph()
     z_format = z.paragraph_format
     z_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-    z.add_run(f'Si fuera la parte VENDEDORA quien incumpliera lo convenido en el presente contrato, deberá abonar a la parte COMPRADORA el doble de la cantidad recibida en concepto de arras o señal, es decir, la suma total de {importeArrasPenalizacionLetras} EUROS ({importeArrasPenalizacion} €)')
+    z.add_run(f'Si fuera la parte VENDEDORA quien incumpliera lo convenido en el presente contrato, deberá abonar a la parte COMPRADORA el doble de la cantidad recibida en concepto de arras o señal, es decir, la suma total de {importeArrasPenalizacionLetras} EUROS ({puntos_millar(importeArrasPenalizacion)} €)')
 
     za = document.add_paragraph()
     za_format = za.paragraph_format
